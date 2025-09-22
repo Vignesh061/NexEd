@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ATS Resume Analyzer - NexEd</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e8eef7 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        padding: 20px 40px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .logo img {
+        width: 40px;
+      }
+
+      .logo-text {
+        font-size: 32px;
+        /* adjust size */
+        font-weight: bold;
+        /* bold for logo look */
+        font-family: Arial, sans-serif;
+      }
+
+      .logo-text .nex {
+        color: #197dbb;
+        /* blue for Nex */
+      }
+
+      .logo-text .ed {
+        color: #000000;
+        /* black for Ed */
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #197dbb;
+        font-weight: 600;
+      }
+
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #197dbb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.9rem;
+      }
+
+      .header a {
+        text-decoration: none;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+
+      .upload-section {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #3d52d5;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-align: center;
+      }
+
+      .upload-area {
+        border: 3px dashed #d0d9f0;
+        border-radius: 15px;
+        padding: 40px 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .upload-area:hover {
+        border-color: #3d52d5;
+        background: #f8f9ff;
+      }
+
+      .upload-area.dragover {
+        border-color: #3d52d5;
+        background: #f0f4ff;
+        transform: scale(1.02);
+      }
+
+      .upload-icon {
+        font-size: 3rem;
+        color: #3d52d5;
+        margin-bottom: 15px;
+      }
+
+      .upload-text {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 10px;
+      }
+
+      .upload-subtext {
+        font-size: 0.9rem;
+        color: #999;
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .uploaded-file {
+        background: #f0f4ff;
+        border: 2px solid #3d52d5;
+        border-radius: 10px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .file-info {
+        flex: 1;
+      }
+
+      .file-name {
+        font-weight: 600;
+        color: #3d52d5;
+        margin-bottom: 4px;
+      }
+
+      .file-size {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .remove-file {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+
+      .remove-file:hover {
+        background: #c0392b;
+        transform: scale(1.1);
+      }
+
+      .job-description {
+        margin-bottom: 30px;
+      }
+
+      .textarea {
+        width: 100%;
+        min-height: 150px;
+        padding: 20px;
+        border: 2px solid #e0e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        transition: all 0.3s ease;
+      }
+
+      .textarea:focus {
+        outline: none;
+        border-color: #3d52d5;
+        box-shadow: 0 0 0 3px rgba(74, 103, 196, 0.1);
+      }
+
+      .analyze-btn {
+        background-color: #ebbb1b;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 16px 32px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .analyze-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(74, 103, 196, 0.4);
+      }
+
+      .analyze-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+
+      .analyze-btn .loading {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid transparent;
+        border-top: 2px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 10px;
+      }
+
+      .analyze-btn.loading .loading {
+        display: inline-block;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .analysis-title {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .analysis-title .analysis-icon {
+        width: 30px;
+        height: 30px;
+        background: #3d52d5;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+      }
+
+      .analysis-title .section-title {
+        margin-bottom: 0;
+      }
+
+      .results-section {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .score-card {
+        background: linear-gradient(135deg, #3d52d5 0%, #2c3e7d 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .score-number {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .score-label {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .recommendations {
+        margin-bottom: 30px;
+      }
+
+      .recommendation-item {
+        background: #f8f9ff;
+        border-left: 4px solid #3d52d5;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .recommendation-item:hover {
+        background: #f0f4ff;
+        transform: translateX(5px);
+      }
+
+      .recommendation-title {
+        font-weight: 600;
+        color: #3d52d5;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .recommendation-text {
+        color: #666;
+        line-height: 1.5;
+      }
+
+      .download-btn {
+        background: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 16px 32px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .download-btn:hover {
+        background: #219a52;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+      }
+
+      .empty-state {
+        text-align: center;
+        color: #999;
+        padding: 60px 20px;
+      }
+
+      .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+      }
+
+      .keyword-analysis {
+        margin-bottom: 30px;
+      }
+
+      .keyword-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .keyword-item {
+        background: #f8f9ff;
+        padding: 15px;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .keyword-item.found {
+        border-color: #27ae60;
+        background: #f0fff4;
+      }
+
+      .keyword-item.missing {
+        border-color: #e74c3c;
+        background: #fff5f5;
+      }
+
+      .keyword-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .keyword-status {
+        font-size: 0.9rem;
+      }
+
+      .keyword-item.found .keyword-status {
+        color: #27ae60;
+      }
+
+      .keyword-item.missing .keyword-status {
+        color: #e74c3c;
+      }
+
+      .back-btn {
+        background: transparent;
+        border: 2px solid #3d52d5;
+        color: #3d52d5;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 15px;
+        margin-top: -8px;
+        margin-bottom: 8px;
+      }
+
+      .back-btn:hover {
+        background: #3d52d5;
+        color: white;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          grid-template-columns: 1fr;
+          gap: 30px;
+          padding: 20px 10px;
+        }
+
+        .header {
+          padding: 15px 20px;
+        }
+
+        .upload-section,
+        .results-section {
+          padding: 30px 20px;
+        }
+
+        .section-title {
+          font-size: 1.5rem;
+        }
+
+        .brand-name {
+          font-size: 1.4rem;
+        }
+
+        .upload-area {
+          padding: 30px 15px;
+        }
+
+        .keyword-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="logo-section">
+        <div class="logo">
+          <!-- <img src="./assets/logo final.png" alt="Logo" /> -->
+
+          <img
+            src="{{ url_for('static', filename='./assets/logo final.png') }}"
+            alt=""
+          />
+        </div>
+        <span class="logo-text">
+          <span class="nex">Nex</span><span class="ed">Ed</span>
+        </span>
+      </div>
+      <a href="/profile">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">M</div>
+          <span id="userName">User</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="container">
+      <!-- Upload Section -->
+
+      <div class="upload-section">
+        <button class="back-btn" onclick="goBack()">← Back</button>
+        <h2 class="section-title">📄 Resume Analysis</h2>
+
+        <form id="analysisForm" method="POST" enctype="multipart/form-data">
+          <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">
+              Drop your resume here or click to browse
+            </div>
+            <div class="upload-subtext">
+              Supports PDF files only (Max 100MB)
+            </div>
+            <input
+              type="file"
+              id="resumeFile"
+              name="resume"
+              class="file-input"
+              accept=".pdf"
+            />
+          </div>
+
+          <div id="uploadedFile" style="display: none"></div>
+
+          <div class="job-description">
+            <h3 style="margin-bottom: 15px; color: #3d52d5">Job Description</h3>
+            <textarea
+              id="jobDescription"
+              name="job_desc"
+              class="textarea"
+              placeholder="Paste the job description here to get more accurate analysis and keyword matching..."
+              required
+            ></textarea>
+          </div>
+
+          <button type="button" class="analyze-btn" id="analyzeBtn">
+            <div class="loading"></div>
+            <span>Analyze Resume</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Results Section -->
+      <div class="results-section">
+        <div class="analysis-title">
+          <div class="analysis-icon">📊</div>
+          <h2 class="section-title">Analysis Results</h2>
+        </div>
+
+        <div id="emptyState" class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <p>
+            Upload your resume and add a job description to see detailed
+            analysis
+          </p>
+        </div>
+
+        <div id="resultsContent" style="display: none">
+          <div class="score-card">
+            <div class="score-number" id="atsScore">--</div>
+            <div class="score-label">ATS Compatibility Score</div>
+          </div>
+
+          <div class="keyword-analysis">
+            <h3 style="margin-bottom: 15px; color: #3d52d5">
+              Keyword Analysis
+            </h3>
+            <div class="keyword-grid" id="keywordGrid"></div>
+          </div>
+
+          <div class="recommendations">
+            <h3 style="margin-bottom: 15px; color: #3d52d5">Recommendations</h3>
+            <div id="recommendationsList"></div>
+          </div>
+
+          <button class="download-btn" onclick="downloadReport()">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7,10 12,15 17,10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Download Analysis Report
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let uploadedFile = null;
+      let analysisResults = null;
+
+      // File upload handling
+      const uploadArea = document.getElementById("uploadArea");
+      const fileInput = document.getElementById("resumeFile");
+      const uploadedFileDiv = document.getElementById("uploadedFile");
+      const analyzeBtn = document.getElementById("analyzeBtn");
+      const analysisForm = document.getElementById("analysisForm");
+
+      uploadArea.addEventListener("click", () => fileInput.click());
+
+      uploadArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadArea.classList.add("dragover");
+      });
+
+      uploadArea.addEventListener("dragleave", () => {
+        uploadArea.classList.remove("dragover");
+      });
+
+      uploadArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFile(files[0]);
+        }
+      });
+
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+          handleFile(e.target.files[0]);
+        }
+      });
+
+      function handleFile(file) {
+        // Validate file type
+        if (
+          !file.type.includes("pdf") &&
+          !file.name.toLowerCase().endsWith(".pdf")
+        ) {
+          alert("Please upload a PDF file only.");
+          return;
+        }
+
+        // Validate file size (100MB limit)
+        if (file.size > 100 * 1024 * 1024) {
+          alert("File size must be less than 10MB.");
+          return;
+        }
+
+        uploadedFile = file;
+        displayUploadedFile(file);
+      }
+
+      function displayUploadedFile(file) {
+        uploadArea.style.display = "none";
+        uploadedFileDiv.style.display = "block";
+
+        const fileSize = (file.size / 1024).toFixed(1);
+        const fileSizeUnit =
+          fileSize > 1024
+            ? `${(fileSize / 1024).toFixed(1)} MB`
+            : `${fileSize} KB`;
+
+        uploadedFileDiv.innerHTML = `
+          <div class="uploaded-file">
+            <div>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3D52D5" stroke-width="2">
+                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+              </svg>
+            </div>
+            <div class="file-info">
+              <div class="file-name">${file.name}</div>
+              <div class="file-size">${fileSizeUnit}</div>
+            </div>
+            <button type="button" class="remove-file" onclick="removeFile()">×</button>
+          </div>
+        `;
+      }
+
+      function removeFile() {
+        uploadedFile = null;
+        uploadedFileDiv.style.display = "none";
+        uploadArea.style.display = "block";
+        fileInput.value = "";
+      }
+
+      // Analysis function
+      function analyzeResume() {
+        const jobDesc = document.getElementById("jobDescription").value.trim();
+        const file = fileInput.files[0];
+
+        if (!file) {
+          alert("Please upload a resume file.");
+          return;
+        }
+
+        if (!jobDesc) {
+          alert("Please enter a job description.");
+          return;
+        }
+
+        // Show loading state
+        analyzeBtn.classList.add("loading");
+        analyzeBtn.disabled = true;
+        analyzeBtn.querySelector("span").textContent = "Analyzing...";
+
+        // Create form data
+        const formData = new FormData();
+        formData.append("resume", file);
+        formData.append("job_desc", jobDesc);
+
+        // Send request to server
+        fetch("/api/analyze-resume", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              displayResults(data.data);
+            } else {
+              alert("Error: " + data.error);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert(
+              "An error occurred while analyzing the resume. Please try again."
+            );
+          })
+          .finally(() => {
+            // Reset button state
+            analyzeBtn.classList.remove("loading");
+            analyzeBtn.disabled = false;
+            analyzeBtn.querySelector("span").textContent = "Analyze Resume";
+          });
+      }
+
+      function displayResults(results) {
+        analysisResults = results;
+
+        // Hide empty state and show results
+        document.getElementById("emptyState").style.display = "none";
+        document.getElementById("resultsContent").style.display = "block";
+
+        // Update score
+        document.getElementById("atsScore").textContent =
+          Math.round(results.score) + "%";
+
+        // Display keywords
+        const keywordGrid = document.getElementById("keywordGrid");
+        keywordGrid.innerHTML = "";
+
+        // Add matched keywords
+        if (results.matched_keywords) {
+          results.matched_keywords.forEach((keyword) => {
+            const keywordDiv = document.createElement("div");
+            keywordDiv.className = "keyword-item found";
+            keywordDiv.innerHTML = `
+              <div class="keyword-name">${keyword}</div>
+              <div class="keyword-status">✓ Found</div>
+            `;
+            keywordGrid.appendChild(keywordDiv);
+          });
+        }
+
+        // Add missing keywords
+        if (results.missing_keywords) {
+          results.missing_keywords.forEach((keyword) => {
+            const keywordDiv = document.createElement("div");
+            keywordDiv.className = "keyword-item missing";
+            keywordDiv.innerHTML = `
+              <div class="keyword-name">${keyword}</div>
+              <div class="keyword-status">✗ Missing</div>
+            `;
+            keywordGrid.appendChild(keywordDiv);
+          });
+        }
+
+        // Display recommendations
+        const recommendationsList = document.getElementById(
+          "recommendationsList"
+        );
+        recommendationsList.innerHTML = "";
+
+        if (results.issues) {
+          results.issues.forEach((issue, index) => {
+            const recommendationDiv = document.createElement("div");
+            recommendationDiv.className = "recommendation-item";
+            recommendationDiv.innerHTML = `
+              <div class="recommendation-title">
+                💡 Recommendation ${index + 1}
+              </div>
+              <div class="recommendation-text">${issue}</div>
+            `;
+            recommendationsList.appendChild(recommendationDiv);
+          });
+        }
+      }
+
+      function downloadReport() {
+        if (!analysisResults) {
+          alert("No analysis results to download.");
+          return;
+        }
+
+        // Create a simple text report
+        let reportContent = `ATS RESUME ANALYSIS REPORT\n`;
+        reportContent += `Generated on: ${analysisResults.analysis_date}\n`;
+        reportContent += `================================\n\n`;
+        reportContent += `ATS COMPATIBILITY SCORE: ${Math.round(
+          analysisResults.score
+        )}%\n\n`;
+
+        if (
+          analysisResults.matched_keywords &&
+          analysisResults.matched_keywords.length > 0
+        ) {
+          reportContent += `MATCHED KEYWORDS:\n`;
+          analysisResults.matched_keywords.forEach((keyword) => {
+            reportContent += `✓ ${keyword}\n`;
+          });
+          reportContent += `\n`;
+        }
+
+        if (
+          analysisResults.missing_keywords &&
+          analysisResults.missing_keywords.length > 0
+        ) {
+          reportContent += `MISSING KEYWORDS:\n`;
+          analysisResults.missing_keywords.forEach((keyword) => {
+            reportContent += `✗ ${keyword}\n`;
+          });
+          reportContent += `\n`;
+        }
+
+        if (analysisResults.issues && analysisResults.issues.length > 0) {
+          reportContent += `RECOMMENDATIONS:\n`;
+          analysisResults.issues.forEach((issue, index) => {
+            reportContent += `${index + 1}. ${issue}\n`;
+          });
+        }
+
+        // Create and download the file
+        const blob = new Blob([reportContent], { type: "text/plain" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = `ATS_Analysis_Report_${
+          new Date().toISOString().split("T")[0]
+        }.txt`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+
+      // Load user data function - consolidated and fixed
+      function loadUserData() {
+        try {
+          // First try to get from localStorage (for logged in users)
+          const loggedInUser = JSON.parse(
+            localStorage.getItem("loggedInUser") || "{}"
+          );
+
+          if (loggedInUser && loggedInUser.email) {
+            // Get all users and find the current user
+            const users = JSON.parse(localStorage.getItem("users") || "[]");
+            const user = users.find((u) => u.email === loggedInUser.email);
+
+            if (user && user.name) {
+              document.getElementById("userName").textContent = user.name;
+              document.getElementById("userAvatar").textContent = user.name
+                .charAt(0)
+                .toUpperCase();
+              console.log("User data loaded successfully:", user.name);
+            } else if (loggedInUser.name) {
+              // Fallback to loggedInUser data if users array doesn't have complete info
+              document.getElementById("userName").textContent =
+                loggedInUser.name;
+              document.getElementById("userAvatar").textContent =
+                loggedInUser.name.charAt(0).toUpperCase();
+              console.log(
+                "User data loaded from loggedInUser:",
+                loggedInUser.name
+              );
+            }
+          } else {
+            console.log("No logged in user found");
+          }
+        } catch (error) {
+          console.error("Error loading user data:", error);
+          // Keep default values if there's an error
+        }
+      }
+
+      // Initialize page
+      document.addEventListener("DOMContentLoaded", function () {
+        // Load user data
+        loadUserData();
+
+        // Add event listener for analyze button
+        analyzeBtn.addEventListener("click", analyzeResume);
+      });
+
+      function goBack() {
+        if (document.referrer && document.referrer !== window.location.href) {
+          window.history.back();
+        } else {
+          window.location.href = "/";
+        }
+      }
+    </script>
+  </body>
+</html>

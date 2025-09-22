@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NexEd - Psychometric Quiz</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: #f5f7fa;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        padding: 10px 20px;
+        background: white;
+        border-radius: 15px 15px 0 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .logo img {
+        width: 40px;
+      }
+
+      .logo-text {
+        font-size: 32px;
+        /* adjust size */
+        font-weight: bold;
+        /* bold for logo look */
+        font-family: Arial, sans-serif;
+      }
+
+      .logo-text .nex {
+        color: #197dbb;
+        /* blue for Nex */
+      }
+
+      .logo-text .ed {
+        color: #000000;
+        /* black for Ed */
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #197dbb;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #197dbb;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      .quiz-title {
+        background: white;
+        padding: 30px 40px 20px;
+        border-bottom: 1px solid #e5e5e5;
+      }
+
+      .quiz-title h1 {
+        color: #4a6cf7;
+        font-size: 2rem;
+        font-weight: 600;
+        margin: 0;
+        text-align: center;
+      }
+
+      .progress-container {
+        background: white;
+        padding: 0 40px 20px;
+        border-bottom: 1px solid #e5e5e5;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #e5e5e5;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4a6cf7, #6b7ce6);
+        border-radius: 3px;
+        transition: width 0.4s ease;
+      }
+
+      .progress-text {
+        text-align: center;
+        color: #666;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .quiz-content {
+        background: #e6f0ff;
+        padding: 40px;
+        border-radius: 0 0 25px 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .question-card {
+        display: none;
+        animation: fadeIn 0.4s ease-in;
+      }
+
+      .question-card.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .question-header {
+        margin-bottom: 25px;
+      }
+
+      .question-number {
+        color: #4a6cf7;
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+      }
+
+      .question-text {
+        color: #4a6cf7;
+        font-size: 1.4rem;
+        font-weight: 600;
+        line-height: 1.5;
+        margin-bottom: 35px;
+      }
+
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 50px;
+      }
+
+      .option {
+        padding: 18px 25px;
+        /* background: #4a6cf7; */
+        border: 2px solid #4a6cf7;
+        color: #4a6cf7;
+        /* border: none; */
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-align: center;
+        box-shadow: 0 3px 15px rgba(74, 108, 247, 0.3);
+      }
+
+      .option:hover {
+        background: #3a5ce6;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(74, 108, 247, 0.4);
+      }
+
+      .option.selected {
+        background: #2a4cd5;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 18px rgba(74, 108, 247, 0.5);
+      }
+
+      .navigation {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .btn {
+        padding: 15px 35px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+      }
+
+      .btn-next {
+        background: #f4b942;
+        color: white;
+        box-shadow: 0 3px 15px rgba(244, 185, 66, 0.3);
+      }
+
+      .btn-next:hover {
+        background: #e6a832;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(244, 185, 66, 0.4);
+      }
+
+      .btn-prev {
+        background: #666;
+        color: white;
+      }
+
+      .btn-prev:hover {
+        background: #555;
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .results {
+        display: none;
+        background: white;
+        padding: 40px;
+        border-radius: 0 0 25px 25px;
+      }
+
+      .results.active {
+        display: block;
+      }
+
+      .personality-profile {
+        background: linear-gradient(135deg, #4a6cf7 0%, #6b7ce6 100%);
+        color: white;
+        padding: 35px;
+        border-radius: 20px;
+        margin: 30px 0;
+        text-align: left;
+      }
+
+      .personality-profile h2 {
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+        text-align: center;
+        font-weight: 700;
+      }
+
+      .profile-section {
+        margin: 25px 0;
+      }
+
+      .profile-section h3 {
+        font-size: 1.3rem;
+        margin-bottom: 12px;
+        opacity: 0.95;
+        font-weight: 600;
+      }
+
+      .profile-section p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        opacity: 0.9;
+      }
+
+      .strengths-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .strength-item {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+      }
+
+      .recommendations {
+        background: #f8f9fa;
+        padding: 35px;
+        border-radius: 20px;
+        margin: 30px 0;
+        text-align: left;
+      }
+
+      .recommendations h3 {
+        color: #2c3e50;
+        margin-bottom: 25px;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .career-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 25px 0;
+      }
+
+      .career-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        border-left: 5px solid #4a6cf7;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .career-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .career-card h4 {
+        color: #2c3e50;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+
+      .career-card p {
+        color: #6c757d;
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 12px;
+      }
+
+      .match-percentage {
+        display: inline-block;
+        background: #4a6cf7;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      .final-cta {
+        text-align: center;
+        margin-top: 40px;
+      }
+
+      .btn-career-path {
+        background: linear-gradient(135deg, #4a6cf7 0%, #6b7ce6 100%);
+        color: white;
+        padding: 20px 50px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border-radius: 30px;
+        box-shadow: 0 5px 25px rgba(74, 108, 247, 0.3);
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+      }
+
+      .btn-career-path:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 35px rgba(74, 108, 247, 0.4);
+      }
+
+      .back-btn {
+        background: transparent;
+        border: 2px solid #3d52d5;
+        color: #3d52d5;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 15px;
+      }
+
+      .back-btn:hover {
+        background: #3d52d5;
+        color: white;
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          padding: 15px 20px;
+        }
+
+        .quiz-content,
+        .results {
+          padding: 25px;
+        }
+
+        .question-text {
+          font-size: 1.2rem;
+        }
+
+        .career-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo-section">
+          <div class="logo">
+            <img
+              src="{{ url_for('static', filename='./assets/logo final.png') }}"
+              alt=""
+            />
+          </div>
+          <span class="logo-text">
+            <span class="nex">Nex</span><span class="ed">Ed</span>
+          </span>
+        </div>
+        <a href="/profile" class="user-info">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <span id="userName">User</span>
+        </a>
+      </div>
+
+      <div class="quiz-title">
+        <button class="back-btn" onclick="goBack()">← Back</button>
+        <h1>Psychometric Quiz</h1>
+      </div>
+
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">Question 1 of 15</div>
+      </div>
+
+      <div class="quiz-content">
+        <div id="quizContainer">
+          <!-- Questions will be inserted here -->
+        </div>
+      </div>
+
+      <div class="results" id="results">
+        <div class="personality-profile" id="personalityProfile"></div>
+        <div class="recommendations">
+          <h3>🎯 Recommended Career Paths</h3>
+          <div class="career-grid" id="careerGrid"></div>
+
+          <h3>📚 Recommended Study Areas</h3>
+          <div class="career-grid" id="studyGrid"></div>
+        </div>
+
+        <div class="final-cta">
+          <a href="/career" class="btn-career-path">
+            🚀 Generate Detailed Career Path
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize quiz when page loads
+      window.onload = loadUserData();
+      // Load user data from signup
+      function loadUserData() {
+        const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+        if (loggedInUser) {
+          const users = JSON.parse(localStorage.getItem("users")) || [];
+          const user = users.find((u) => u.email === loggedInUser.email);
+          if (user && user.name) {
+            document.getElementById("userName").textContent = user.name;
+            document.getElementById("userAvatar").textContent = user.name
+              .charAt(0)
+              .toUpperCase();
+          }
+        }
+      }
+
+      function goBack() {
+        if (document.referrer && document.referrer !== window.location.href) {
+          window.history.back();
+        } else {
+          window.location.href = "/";
+        }
+      }
+
+
+      // Interest and preference-based questions
+      const questions = [
+        {
+          text: "What type of activities do you find most engaging in your free time?",
+          options: [
+            {
+              text: "Building, fixing, or creating things with my hands",
+              categories: ["practical", "technical"],
+            },
+            {
+              text: "Reading, researching, or solving puzzles",
+              categories: ["analytical", "intellectual"],
+            },
+            {
+              text: "Drawing, writing, music, or other creative pursuits",
+              categories: ["creative", "artistic"],
+            },
+            {
+              text: "Helping friends, volunteering, or organizing events",
+              categories: ["social", "helpful"],
+            },
+          ],
+        },
+        {
+          text: "Which work environment would you thrive in most?",
+          options: [
+            {
+              text: "A laboratory or research facility",
+              categories: ["analytical", "technical"],
+            },
+            {
+              text: "An open, collaborative office space",
+              categories: ["social", "collaborative"],
+            },
+            {
+              text: "A creative studio or flexible workspace",
+              categories: ["creative", "flexible"],
+            },
+            {
+              text: "Outdoors or in hands-on workshops",
+              categories: ["practical", "active"],
+            },
+          ],
+        },
+        {
+          text: "What motivates you most in your work or studies?",
+          options: [
+            {
+              text: "Solving complex problems and discovering new things",
+              categories: ["analytical", "intellectual"],
+            },
+            {
+              text: "Making a positive impact on people's lives",
+              categories: ["social", "helpful"],
+            },
+            {
+              text: "Creating something original and expressing myself",
+              categories: ["creative", "artistic"],
+            },
+            {
+              text: "Achieving goals and seeing tangible results",
+              categories: ["practical", "achievement"],
+            },
+          ],
+        },
+        {
+          text: "Which of these strengths best describes you?",
+          options: [
+            {
+              text: "I'm great at analyzing data and finding patterns",
+              categories: ["analytical", "detail-oriented"],
+            },
+            {
+              text: "I'm excellent at communicating and working with people",
+              categories: ["social", "communication"],
+            },
+            {
+              text: "I'm highly creative and think outside the box",
+              categories: ["creative", "innovative"],
+            },
+            {
+              text: "I'm practical and good at implementing solutions",
+              categories: ["practical", "efficient"],
+            },
+          ],
+        },
+        {
+          text: "What type of challenges excite you most?",
+          options: [
+            {
+              text: "Technical problems that require logical thinking",
+              categories: ["technical", "analytical"],
+            },
+            {
+              text: "Creative projects with no clear right answer",
+              categories: ["creative", "flexible"],
+            },
+            {
+              text: "Helping others overcome difficulties",
+              categories: ["social", "helpful"],
+            },
+            {
+              text: "Organizing and managing complex projects",
+              categories: ["organized", "leadership"],
+            },
+          ],
+        },
+        {
+          text: "How do you prefer to learn new things?",
+          options: [
+            {
+              text: "Through hands-on experience and practice",
+              categories: ["practical", "experiential"],
+            },
+            {
+              text: "By researching and understanding the theory first",
+              categories: ["analytical", "intellectual"],
+            },
+            {
+              text: "Through creative exploration and experimentation",
+              categories: ["creative", "innovative"],
+            },
+            {
+              text: "By discussing and collaborating with others",
+              categories: ["social", "collaborative"],
+            },
+          ],
+        },
+        {
+          text: "What type of impact do you want to make in your career?",
+          options: [
+            {
+              text: "Advance scientific knowledge or technology",
+              categories: ["technical", "innovative"],
+            },
+            {
+              text: "Create beautiful or meaningful art/content",
+              categories: ["creative", "artistic"],
+            },
+            {
+              text: "Help individuals or communities improve their lives",
+              categories: ["social", "helpful"],
+            },
+            {
+              text: "Build successful businesses or organizations",
+              categories: ["business", "leadership"],
+            },
+          ],
+        },
+        {
+          text: "Which activities give you the most energy?",
+          options: [
+            {
+              text: "Working with data, numbers, or complex systems",
+              categories: ["analytical", "technical"],
+            },
+            {
+              text: "Brainstorming and generating new ideas",
+              categories: ["creative", "innovative"],
+            },
+            {
+              text: "Teaching, mentoring, or helping others",
+              categories: ["social", "educational"],
+            },
+            {
+              text: "Planning and executing projects",
+              categories: ["organized", "practical"],
+            },
+          ],
+        },
+        {
+          text: "What's your ideal work schedule and style?",
+          options: [
+            {
+              text: "Flexible hours with independence to work at my own pace",
+              categories: ["flexible", "independent"],
+            },
+            {
+              text: "Structured schedule with clear deadlines and goals",
+              categories: ["organized", "structured"],
+            },
+            {
+              text: "Collaborative schedule with lots of team interaction",
+              categories: ["social", "collaborative"],
+            },
+            {
+              text: "Project-based work with variety and new challenges",
+              categories: ["variety", "dynamic"],
+            },
+          ],
+        },
+        {
+          text: "Which subjects or topics fascinate you most?",
+          options: [
+            {
+              text: "Science, technology, mathematics, or engineering",
+              categories: ["technical", "analytical"],
+            },
+            {
+              text: "Arts, literature, design, or media",
+              categories: ["creative", "artistic"],
+            },
+            {
+              text: "Psychology, sociology, education, or healthcare",
+              categories: ["social", "helpful"],
+            },
+            {
+              text: "Business, economics, law, or management",
+              categories: ["business", "leadership"],
+            },
+          ],
+        },
+        {
+          text: "How do you handle stress and pressure?",
+          options: [
+            {
+              text: "I work systematically through problems step by step",
+              categories: ["analytical", "methodical"],
+            },
+            {
+              text: "I find creative solutions and think outside the box",
+              categories: ["creative", "adaptable"],
+            },
+            {
+              text: "I seek support from others and work collaboratively",
+              categories: ["social", "collaborative"],
+            },
+            {
+              text: "I focus on practical solutions and take action",
+              categories: ["practical", "decisive"],
+            },
+          ],
+        },
+        {
+          text: "What type of recognition matters most to you?",
+          options: [
+            {
+              text: "Recognition for expertise and technical skills",
+              categories: ["technical", "expert"],
+            },
+            {
+              text: "Appreciation for creativity and original thinking",
+              categories: ["creative", "innovative"],
+            },
+            {
+              text: "Gratitude for helping and supporting others",
+              categories: ["social", "helpful"],
+            },
+            {
+              text: "Acknowledgment of leadership and results",
+              categories: ["leadership", "achievement"],
+            },
+          ],
+        },
+        {
+          text: "Which tools or resources do you enjoy working with most?",
+          options: [
+            {
+              text: "Technology, software, or scientific instruments",
+              categories: ["technical", "digital"],
+            },
+            {
+              text: "Art supplies, design software, or creative tools",
+              categories: ["creative", "artistic"],
+            },
+            {
+              text: "Communication platforms and collaborative tools",
+              categories: ["social", "communication"],
+            },
+            {
+              text: "Planning tools, spreadsheets, or project management systems",
+              categories: ["organized", "systematic"],
+            },
+          ],
+        },
+        {
+          text: "What size organization would you prefer to work for?",
+          options: [
+            {
+              text: "Large corporation with established processes",
+              categories: ["structured", "corporate"],
+            },
+            {
+              text: "Medium-sized company with growth opportunities",
+              categories: ["balanced", "growing"],
+            },
+            {
+              text: "Small startup with innovation and flexibility",
+              categories: ["innovative", "flexible"],
+            },
+            {
+              text: "Non-profit or social impact organization",
+              categories: ["social", "purposeful"],
+            },
+          ],
+        },
+        {
+          text: "What's most important to you in a career?",
+          options: [
+            {
+              text: "Intellectual stimulation and continuous learning",
+              categories: ["intellectual", "growth"],
+            },
+            {
+              text: "Creative freedom and self-expression",
+              categories: ["creative", "autonomous"],
+            },
+            {
+              text: "Making a difference in people's lives",
+              categories: ["social", "meaningful"],
+            },
+            {
+              text: "Financial stability and career advancement",
+              categories: ["practical", "ambitious"],
+            },
+          ],
+        },
+      ];
+
+      // Career recommendations based on category combinations
+      const careerDatabase = {
+        "technical-analytical": [
+          {
+            name: "Software Engineer",
+            description: "Design and develop software applications and systems",
+            match: 95,
+          },
+          {
+            name: "Data Scientist",
+            description:
+              "Analyze complex data to help organizations make decisions",
+            match: 92,
+          },
+          {
+            name: "Research Scientist",
+            description:
+              "Conduct research to advance knowledge in scientific fields",
+            match: 88,
+          },
+        ],
+        "creative-artistic": [
+          {
+            name: "UX/UI Designer",
+            description:
+              "Create user-friendly and visually appealing digital interfaces",
+            match: 94,
+          },
+          {
+            name: "Graphic Designer",
+            description:
+              "Create visual content for various media and platforms",
+            match: 91,
+          },
+          {
+            name: "Content Creator",
+            description:
+              "Develop engaging content across multiple media channels",
+            match: 87,
+          },
+        ],
+        "social-helpful": [
+          {
+            name: "Clinical Psychologist",
+            description: "Help individuals overcome mental health challenges",
+            match: 93,
+          },
+          {
+            name: "Teacher/Professor",
+            description: "Educate and inspire students in academic subjects",
+            match: 90,
+          },
+          {
+            name: "Social Worker",
+            description:
+              "Support individuals and communities facing challenges",
+            match: 86,
+          },
+        ],
+        "business-leadership": [
+          {
+            name: "Management Consultant",
+            description:
+              "Help organizations improve their performance and efficiency",
+            match: 92,
+          },
+          {
+            name: "Product Manager",
+            description: "Guide the development and strategy of products",
+            match: 89,
+          },
+          {
+            name: "Marketing Manager",
+            description: "Develop and execute marketing strategies for brands",
+            match: 85,
+          },
+        ],
+        "practical-technical": [
+          {
+            name: "Engineer",
+            description: "Design and build solutions to technical problems",
+            match: 91,
+          },
+          {
+            name: "Project Manager",
+            description:
+              "Plan and execute complex projects from start to finish",
+            match: 87,
+          },
+          {
+            name: "Technical Specialist",
+            description: "Provide expertise in specific technical areas",
+            match: 84,
+          },
+        ],
+      };
+
+      const studyDatabase = {
+        "technical-analytical": [
+          {
+            name: "Computer Science",
+            description: "Programming, algorithms, and software development",
+            match: 95,
+          },
+          {
+            name: "Data Science & Analytics",
+            description: "Statistics, machine learning, and data analysis",
+            match: 92,
+          },
+          {
+            name: "Engineering",
+            description:
+              "Apply scientific principles to solve real-world problems",
+            match: 88,
+          },
+        ],
+        "creative-artistic": [
+          {
+            name: "Design Studies",
+            description:
+              "Visual communication, user experience, and creative problem-solving",
+            match: 94,
+          },
+          {
+            name: "Digital Media Arts",
+            description:
+              "Creative technology, multimedia production, and digital storytelling",
+            match: 90,
+          },
+          {
+            name: "Fine Arts",
+            description:
+              "Traditional and contemporary artistic expression and techniques",
+            match: 86,
+          },
+        ],
+        "social-helpful": [
+          {
+            name: "Psychology",
+            description: "Understanding human behavior and mental processes",
+            match: 93,
+          },
+          {
+            name: "Education",
+            description:
+              "Learning theories, curriculum development, and teaching methods",
+            match: 89,
+          },
+          {
+            name: "Social Work",
+            description: "Community development and individual support systems",
+            match: 85,
+          },
+        ],
+        "business-leadership": [
+          {
+            name: "Business Administration",
+            description:
+              "Management principles, strategy, and organizational leadership",
+            match: 91,
+          },
+          {
+            name: "Marketing",
+            description:
+              "Consumer behavior, brand strategy, and digital marketing",
+            match: 87,
+          },
+          {
+            name: "Economics",
+            description:
+              "Market analysis, financial systems, and economic theory",
+            match: 84,
+          },
+        ],
+      };
+
+      let currentQuestion = 0;
+      let userProfile = {
+        categories: {},
+        strengths: [],
+        preferences: [],
+      };
+      let selectedAnswer = null;
+
+      function initQuiz() {
+        renderQuestion();
+        updateProgress();
+      }
+
+      function renderQuestion() {
+        const container = document.getElementById("quizContainer");
+        const question = questions[currentQuestion];
+
+        container.innerHTML = `
+                <div class="question-card active">
+                    <div class="question-header">
+                        <div class="question-number">Question ${
+                          currentQuestion + 1
+                        }</div>
+                        <div class="question-text">${question.text}</div>
+                    </div>
+                    <div class="options">
+                        ${question.options
+                          .map(
+                            (option, index) => `
+                            <div class="option" data-index="${index}">${option.text}</div>
+                        `
+                          )
+                          .join("")}
+                    </div>
+                    <div class="navigation">
+                        ${
+                          currentQuestion > 0
+                            ? '<button class="btn btn-prev" onclick="previousQuestion()">Previous</button>'
+                            : ""
+                        }
+                        <button class="btn btn-next" onclick="nextQuestion()" id="nextBtn" disabled>Next</button>
+                    </div>
+                </div>
+            `;
+
+        // Add click handlers for options
+        document.querySelectorAll(".option").forEach((option) => {
+          option.addEventListener("click", () => selectOption(option));
+        });
+
+        selectedAnswer = null;
+      }
+
+      function selectOption(option) {
+        document
+          .querySelectorAll(".option")
+          .forEach((opt) => opt.classList.remove("selected"));
+        option.classList.add("selected");
+        selectedAnswer = parseInt(option.dataset.index);
+        document.getElementById("nextBtn").disabled = false;
+      }
+
+      function nextQuestion() {
+        if (selectedAnswer === null) return;
+
+        // Record answer
+        const selectedOption =
+          questions[currentQuestion].options[selectedAnswer];
+        selectedOption.categories.forEach((category) => {
+          userProfile.categories[category] =
+            (userProfile.categories[category] || 0) + 1;
+        });
+
+        if (currentQuestion < questions.length - 1) {
+          currentQuestion++;
+          renderQuestion();
+          updateProgress();
+        } else {
+          showResults();
+        }
+      }
+
+      function previousQuestion() {
+        if (currentQuestion > 0) {
+          currentQuestion--;
+          renderQuestion();
+          updateProgress();
+        }
+      }
+
+      function updateProgress() {
+        const progress = ((currentQuestion + 1) / questions.length) * 100;
+        document.getElementById("progressBar").style.width = progress + "%";
+        document.getElementById("progressText").textContent = `Question ${
+          currentQuestion + 1
+        } of ${questions.length}`;
+      }
+
+      function analyzeProfile() {
+        const sortedCategories = Object.entries(userProfile.categories)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 6);
+
+        const topCategories = sortedCategories.map(
+          ([category, count]) => category
+        );
+
+        // Determine primary profile type
+        let profileType = "Balanced Professional";
+        let description =
+          "You have a well-rounded set of interests and skills.";
+        let strengths = [];
+
+        if (
+          topCategories.includes("technical") &&
+          topCategories.includes("analytical")
+        ) {
+          profileType = "Technical Problem Solver";
+          description =
+            "You excel at using technology and analytical thinking to solve complex problems.";
+          strengths = [
+            "Logical Reasoning",
+            "Technical Skills",
+            "Data Analysis",
+            "Problem-Solving",
+          ];
+        } else if (
+          topCategories.includes("creative") &&
+          topCategories.includes("artistic")
+        ) {
+          profileType = "Creative Innovator";
+          description =
+            "You thrive on creativity, original thinking, and artistic expression.";
+          strengths = [
+            "Creative Thinking",
+            "Artistic Skills",
+            "Innovation",
+            "Visual Design",
+          ];
+        } else if (
+          topCategories.includes("social") &&
+          topCategories.includes("helpful")
+        ) {
+          profileType = "People-Focused Helper";
+          description =
+            "You're motivated by helping others and making a positive social impact.";
+          strengths = [
+            "Communication",
+            "Empathy",
+            "Leadership",
+            "Collaboration",
+          ];
+        } else if (
+          topCategories.includes("business") ||
+          topCategories.includes("leadership")
+        ) {
+          profileType = "Strategic Leader";
+          description =
+            "You have strong business acumen and natural leadership abilities.";
+          strengths = [
+            "Leadership",
+            "Strategic Thinking",
+            "Organization",
+            "Decision-Making",
+          ];
+        }
+
+        return { profileType, description, strengths, topCategories };
+      }
+
+      function getRecommendations(topCategories) {
+        let recommendedCareers = [];
+        let recommendedStudy = [];
+
+        // Find best matching career categories
+        const categoryPairs = [
+          topCategories[0] + "-" + topCategories[1],
+          topCategories[1] + "-" + topCategories[0],
+        ];
+
+        for (let pair of categoryPairs) {
+          if (careerDatabase[pair]) {
+            recommendedCareers = careerDatabase[pair];
+            break;
+          }
+        }
+
+        for (let pair of categoryPairs) {
+          if (studyDatabase[pair]) {
+            recommendedStudy = studyDatabase[pair];
+            break;
+          }
+        }
+
+        // Fallback to individual category matches
+        if (recommendedCareers.length === 0) {
+          const fallbackKey = Object.keys(careerDatabase).find(
+            (key) =>
+              key.includes(topCategories[0]) || key.includes(topCategories[1])
+          );
+          if (fallbackKey) recommendedCareers = careerDatabase[fallbackKey];
+        }
+
+        if (recommendedStudy.length === 0) {
+          const fallbackKey = Object.keys(studyDatabase).find(
+            (key) =>
+              key.includes(topCategories[0]) || key.includes(topCategories[1])
+          );
+          if (fallbackKey) recommendedStudy = studyDatabase[fallbackKey];
+        }
+
+        return { recommendedCareers, recommendedStudy };
+      }
+
+      function showResults() {
+        const analysis = analyzeProfile();
+        const recommendations = getRecommendations(analysis.topCategories);
+
+        // Display results
+        document.querySelector(".quiz-content").style.display = "none";
+        document.getElementById("results").classList.add("active");
+
+        // Show personality profile
+        const profileDiv = document.getElementById("personalityProfile");
+        profileDiv.innerHTML = `
+                <h2>${analysis.profileType}</h2>
+                <div class="profile-section">
+                    <h3>🎯 Your Profile</h3>
+                    <p>${analysis.description}</p>
+                </div>
+                <div class="profile-section">
+                    <h3>💪 Your Key Strengths</h3>
+                    <div class="strengths-grid">
+                        ${analysis.strengths
+                          .map(
+                            (strength) => `
+                            <div class="strength-item">${strength}</div>
+                        `
+                          )
+                          .join("")}
+                    </div>
+                </div>
+            `;
+
+        // Show career recommendations
+        const careerDiv = document.getElementById("careerGrid");
+        careerDiv.innerHTML = recommendations.recommendedCareers
+          .map(
+            (career) => `
+                <div class="career-card">
+                    <h4>${career.name}</h4>
+                    <p>${career.description}</p>
+                    <span class="match-percentage">${career.match}% Match</span>
+                </div>
+            `
+          )
+          .join("");
+
+        // Show study recommendations
+        const studyDiv = document.getElementById("studyGrid");
+        studyDiv.innerHTML = recommendations.recommendedStudy
+          .map(
+            (study) => `
+                <div class="career-card">
+                    <h4>${study.name}</h4>
+                    <p>${study.description}</p>
+                    <span class="match-percentage">${study.match}% Match</span>
+                </div>
+            `
+          )
+          .join("");
+
+        // Update progress bar to 100%
+        document.getElementById("progressBar").style.width = "100%";
+        document.getElementById("progressText").textContent =
+          "Assessment Complete!";
+
+        // Store quiz results for career page
+        const quizResults = {
+          profileType: analysis.profileType,
+          topCategories: analysis.topCategories,
+          strengths: analysis.strengths,
+          recommendedCareers: recommendations.recommendedCareers,
+          recommendedStudy: recommendations.recommendedStudy,
+          timestamp: new Date().toISOString(),
+        };
+        sessionStorage.setItem("quizResults", JSON.stringify(quizResults));
+      }
+
+      // Initialize quiz when page loads
+      window.onload = initQuiz;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>NexEd - Chat Agent</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #e8eef7 0%, #f5f7fa 100%);
+        color: var(--text);
+        line-height: 1.5;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+      }
+
+      /* Header */
+      .header {
+        width: 100%;
+        max-width: 1200px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 40px;
+        margin-bottom: 20px;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo img {
+        width: 40px;
+      }
+
+      .logo-text {
+        font-size: 32px;
+        font-weight: bold;
+        font-family: Arial, sans-serif;
+      }
+
+      .logo-text .nex {
+        color: #197dbb;
+      }
+
+      .logo-text .ed {
+        color: #000000;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #197dbb;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #197dbb;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      /* Chat Container */
+      .chat-container {
+        width: 100%;
+        max-width: 1000px;
+        background: #c8d6e8;
+        border-radius: 32px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 600px;
+      }
+
+      .chat-box {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        scroll-behavior: smooth;
+        margin-bottom: 20px;
+      }
+
+      /* Messages */
+      .message {
+        margin-bottom: 24px;
+        animation: slideIn 0.4s ease-out;
+        clear: both;
+      }
+
+      .message.bot {
+        float: left;
+        width: 100%;
+      }
+
+      .message.user {
+        float: right;
+        width: 100%;
+        text-align: right;
+      }
+
+      .message-bubble {
+        display: inline-block;
+        max-width: 70%;
+        padding: 20px 28px;
+        border-radius: 24px;
+        font-size: 16px;
+        line-height: 1.5;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        margin: 0 0 8px 0;
+      }
+
+      .message.bot .message-bubble {
+        background: #ebbb1b;
+        color: white;
+        border-bottom-left-radius: 8px;
+      }
+
+      .message.user .message-bubble {
+        background: #e5e7eb;
+        color: #374151;
+        border-bottom-right-radius: 8px;
+        text-align: left;
+      }
+
+      /* Options */
+      .options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 20px;
+        clear: both;
+      }
+
+      .option-btn {
+        padding: 14px 24px;
+        border: none;
+        border-radius: 30px;
+        background: #4f46e5;
+        color: white;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+      }
+
+      .option-btn:hover {
+        background: #3730a3;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+      }
+
+      .option-btn:active {
+        transform: translateY(0);
+      }
+
+      /* Controls */
+      .controls {
+        display: flex;
+        justify-content: center;
+        padding-top: 20px;
+        border-top: 2px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .restart-btn {
+        padding: 12px 24px;
+        border: 2px solid #3d52d5;
+        border-radius: 24px;
+        background: white;
+        color: #3d52d5;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      .restart-btn:hover {
+        background: #4f46e5;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      /* Animations */
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Scrollbar */
+      .chat-box::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .chat-box::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .chat-box::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+
+      .chat-box::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .back-btn {
+        width: fit-content;
+        background: transparent;
+        border: 2px solid #3d52d5;
+        color: #3d52d5;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 15px;
+      }
+
+      .back-btn:hover {
+        background: #3d52d5;
+        color: white;
+      }
+
+       .page-title {
+        margin-top: -15px;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #3d52d5;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .header {
+          padding: 15px 20px;
+        }
+
+        .brand-info h1 {
+          font-size: 24px;
+        }
+
+        .profile-name {
+          display: none;
+        }
+
+        .chat-container {
+          margin: 10px;
+          padding: 20px;
+          border-radius: 24px;
+        }
+
+        .message-bubble {
+          max-width: 85%;
+          font-size: 14px;
+          padding: 16px 20px;
+        }
+
+        .options {
+          gap: 8px;
+        }
+
+        .option-btn {
+          padding: 12px 18px;
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-section">
+        <div class="logo">
+          <img
+            src="{{ url_for('static', filename='./assets/logo final.png') }}"
+            alt=""
+          />
+        </div>
+        <span class="logo-text">
+          <span class="nex">Nex</span><span class="ed">Ed</span>
+        </span>
+      </div>
+
+      <a href="/profile" class="user-info">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <span id="userName">User</span>
+      </a>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+      <button class="back-btn" onclick="goBack()">← Back</button>
+      <h1 class="page-title">Chat Agent</h1>
+
+      <div class="chat-box" id="chat-box" role="log" aria-live="polite">
+        <!-- Messages will be added here dynamically -->
+      </div>
+
+      <div class="controls">
+        <button class="restart-btn" id="restart-btn" onclick="restartChat()">
+          Restart
+        </button>
+      </div>
+    </div>
+
+    <script>
+      let current = "start";
+      let responseCount = 0;
+      let userName = "Student";
+
+      const state = {
+        scores: { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 },
+        answers: [],
+        history: [],
+      };
+
+      function chatBox() {
+        return document.getElementById("chat-box");
+      }
+
+      function addMessage(text, sender = "bot") {
+        const box = chatBox();
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${sender}`;
+
+        const bubbleDiv = document.createElement("div");
+        bubbleDiv.className = "message-bubble";
+        bubbleDiv.innerHTML = text;
+
+        messageDiv.appendChild(bubbleDiv);
+        box.appendChild(messageDiv);
+        box.scrollTop = box.scrollHeight;
+
+        if (sender === "user") {
+          responseCount++;
+          updateProfile();
+        }
+      }
+
+      function showOptions(node) {
+        const box = chatBox();
+        const optionsDiv = document.createElement("div");
+        optionsDiv.className = "options";
+
+        (node.options || []).forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = "option-btn";
+          btn.textContent = opt.label;
+          btn.onclick = () => {
+            addMessage(opt.label, "user");
+
+            if (opt.effects && opt.effects.score) {
+              applyScoreEffects(opt.effects.score);
+            }
+
+            // Handle different action types
+            if (opt.action === "interest_finish") {
+              setTimeout(() => {
+                optionsDiv.remove();
+                handleInterestFinish();
+              }, 500);
+            } else if (opt.next) {
+              current = opt.next;
+              setTimeout(() => {
+                optionsDiv.remove();
+                renderQuestion();
+              }, 500);
+            } else if (opt.result) {
+              setTimeout(() => {
+                optionsDiv.remove();
+                addMessage(opt.result, "bot");
+                setTimeout(showRestartOptions, 500);
+              }, 500);
+            }
+          };
+          optionsDiv.appendChild(btn);
+        });
+
+        box.appendChild(optionsDiv);
+        box.scrollTop = box.scrollHeight;
+      }
+
+      function applyScoreEffects(scoreObj) {
+        for (const k in scoreObj) {
+          if (state.scores.hasOwnProperty(k)) {
+            state.scores[k] += Number(scoreObj[k]) || 0;
+          }
+        }
+      }
+
+      function handleInterestFinish() {
+        const scores = state.scores;
+        const maxScore = Math.max(...Object.values(scores));
+        const topTypes = Object.keys(scores).filter(
+          (k) => scores[k] === maxScore
+        );
+
+        let recommendation = "";
+
+        // RIASEC recommendations based on highest scores
+        const recommendations = {
+          R: "You seem to enjoy **hands-on, practical work**! Consider: Engineering (Mechanical, Civil, Electrical), Architecture, ITI trades, Polytechnic diploma, or technical vocational courses.",
+          I: "You're drawn to **research and analytical thinking**! Consider: Science streams (PCM/PCB), Computer Science, Data Science, Research-oriented courses, or B.Sc → MSc → PhD paths.",
+          A: "You have **creative and artistic interests**! Consider: Design courses (B.Des, BFA), Animation, Media & Journalism, Architecture, Fashion Design, or Fine Arts.",
+          S: "You enjoy **helping people and social work**! Consider: Medicine (MBBS), Nursing, Psychology, Social Work, Teaching (B.Ed), or NGO/social sector roles.",
+          E: "You're interested in **leadership and business**! Consider: Business Management (BBA → MBA), Commerce (CA/CMA), Entrepreneurship, or Sales & Marketing roles.",
+          C: "You prefer **organized, systematic work**! Consider: Commerce (Accounting, Finance), Banking, Administrative roles, or Computer Science with focus on systems.",
+        };
+
+        if (topTypes.length === 1) {
+          recommendation = recommendations[topTypes[0]];
+        } else {
+          // Multiple high scores - provide combined recommendation
+          recommendation = `You have diverse interests spanning: ${topTypes
+            .map((t) => {
+              const names = {
+                R: "Practical",
+                I: "Investigative",
+                A: "Artistic",
+                S: "Social",
+                E: "Enterprising",
+                C: "Conventional",
+              };
+              return names[t];
+            })
+            .join(
+              ", "
+            )} areas. Consider interdisciplinary fields or courses that combine these interests!`;
+        }
+
+        addMessage(
+          `Based on your responses, here's my recommendation:\n\n${recommendation}\n\nWould you like specific course suggestions for any of these areas?`,
+          "bot"
+        );
+        setTimeout(showRestartOptions, 1000);
+      }
+
+      function renderQuestion() {
+        const node = questions[current];
+        if (!node) {
+          addMessage("Question not found. Restarting...", "bot");
+          setTimeout(() => restartChat(), 1000);
+          return;
+        }
+
+        addMessage(node.text, "bot");
+        showOptions(node);
+      }
+
+      function showRestartOptions() {
+        const box = chatBox();
+        const optionsDiv = document.createElement("div");
+        optionsDiv.className = "options";
+
+        const restartBtn = document.createElement("button");
+        restartBtn.className = "option-btn";
+        restartBtn.textContent = "Start Again";
+        restartBtn.onclick = () => {
+          addMessage("Start Again", "user");
+          restartChat();
+          optionsDiv.remove();
+        };
+
+        optionsDiv.appendChild(restartBtn);
+        box.appendChild(optionsDiv);
+        box.scrollTop = box.scrollHeight;
+      }
+
+      function restartChat() {
+        current = "start";
+        const box = chatBox();
+        box.innerHTML = "";
+
+        // Reset state
+        state.scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+        state.answers = [];
+        state.history = [];
+
+        renderQuestion();
+      }
+
+      // function updateProfile() {
+      //   // Function to get user data and update profile section
+      //   function getUserData() {
+      //     // Removed localStorage/sessionStorage usage as per requirements
+      //     return { name: "Student" };
+      //   }
+
+      //   const userData = getUserData();
+
+      //   if (userData && userData.name) {
+      //     document.getElementById("userName").textContent = userData.name;
+      //     document.getElementById("userAvatar").textContent = userData.name
+      //       .charAt(0)
+      //       .toUpperCase();
+      //   }
+      // }
+
+      function loadUserData() {
+        const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+        if (loggedInUser) {
+          const users = JSON.parse(localStorage.getItem("users")) || [];
+          const user = users.find((u) => u.email === loggedInUser.email);
+          if (user && user.name) {
+            document.getElementById("userName").textContent = user.name;
+            document.getElementById("userAvatar").textContent = user.name
+              .charAt(0)
+              .toUpperCase();
+          }
+        }
+        // Show quiz prompt if no quiz results found
+      }
+      // Initialize
+      window.onload = function () {
+        loadUserData();
+        restartChat();
+      };
+
+      function goBack() {
+        if (document.referrer && document.referrer !== window.location.href) {
+          window.history.back();
+        } else {
+          window.location.href = "/";
+        }
+      }
+    </script>
+    <script>
+      // questions.js - Complete rule-based decision tree
+      const questions = {
+        // ENTRY
+        start: {
+          text: "Hi — are you a School Student or a College Student?",
+          options: [
+            { label: "School Student", next: "school_q1" },
+            { label: "College Student", next: "college_q1" },
+          ],
+        },
+
+        // -------------------------
+        // SCHOOL FLOW
+        // -------------------------
+        school_q1: {
+          text: "Which broad stream do you enjoy most right now?",
+          options: [
+            {
+              label: "Science (Maths / Physics / Chemistry / Biology)",
+              next: "school_science_focus",
+            },
+            {
+              label: "Commerce (Accounts / Business / Economics)",
+              next: "school_commerce",
+            },
+            { label: "Arts / Humanities", next: "school_arts" },
+            {
+              label: "Vocational / Skilled trades (ITI / Polytech)",
+              next: "school_vocational",
+            },
+            {
+              label: "Not sure — help me choose (quick interest quiz)",
+              next: "interest_q1",
+            },
+          ],
+        },
+
+        // SCHOOL - SCIENCE
+        school_science_focus: {
+          text: "Which of these are you most excited about?",
+          options: [
+            {
+              label: "Solving math/physics problems & building things",
+              next: "school_pcm",
+            },
+            {
+              label: "Learning about living systems, medicine, healthcare",
+              next: "school_pcb",
+            },
+            {
+              label: "Pure science & experiments (chem/physics research)",
+              next: "school_purescience",
+            },
+            {
+              label: "Both / interdisciplinary (e.g., bioinformatics)",
+              next: "school_pcmb",
+            },
+          ],
+        },
+
+        school_pcm: {
+          text: "PCM students often pick Engineering, CS, Architecture or Maths. Which attracts you most?",
+          options: [
+            {
+              label: "Engineering / Technology (B.Tech / BE)",
+              next: "school_pcm_engineering",
+            },
+            {
+              label: "Computer & Software (BCA / B.Sc CS)",
+              result:
+                "Courses: B.Tech CSE / BCA / B.Sc Computer Science. Entrance & prep: JEE (for many B.Tech), state CETs, direct college admissions. Careers: Software Engineer, Web Dev, DevOps, Data Analyst, Cybersecurity. Path: internships → placements / higher studies (M.Tech/MS).",
+            },
+            {
+              label: "Architecture / Design",
+              result:
+                "Courses: B.Arch, B.Des. Entrance: NATA/Architecture exams. Careers: Architect, Interior Designer, Urban Planner, Product Designer.",
+            },
+            {
+              label: "Mathematics / Statistics / Actuarial",
+              result:
+                "Courses: B.Sc / B.Stat / B.Math. Careers: Actuary (requires professional actuarial exams), Quant / Data Analyst, Research.",
+            },
+          ],
+        },
+
+        school_pcm_engineering: {
+          text: "Which engineering domain appeals to you?",
+          options: [
+            {
+              label: "Computer / AI / Data (CSE, AI, DS)",
+              result:
+                "Courses: B.Tech CSE / B.Tech in AI & Data. Careers: Software Engineer, ML Engineer, Data Scientist, Backend/Frontend Dev. Exams: JEE, state CET; later GATE for PG/PSU.",
+            },
+            {
+              label: "Electronics & Communication (ECE)",
+              result:
+                "Courses: B.Tech ECE. Careers: Embedded Systems, IoT Developer, VLSI, Telecom Engineer.",
+            },
+            {
+              label: "Mechanical / Automotive",
+              result:
+                "Courses: B.Tech Mechanical. Careers: Design Engineer, Manufacturing, Automotive, Robotics.",
+            },
+            {
+              label: "Civil / Infrastructure",
+              result:
+                "Courses: B.Tech Civil. Careers: Structural Engineer, Site Engineer, Urban Planning, Infrastructure.",
+            },
+            {
+              label: "Electrical & Power (EEE)",
+              result:
+                "Courses: B.Tech EEE. Careers: Power Systems, Renewable Energy, Control Systems.",
+            },
+            {
+              label: "Chemical / Process",
+              result:
+                "Courses: B.Tech Chemical. Careers: Process Engineer, Petrochemical, Pharma, Materials.",
+            },
+            {
+              label: "Aerospace / Aeronautical",
+              result:
+                "Courses: B.Tech Aerospace. Careers: Aircraft design, Avionics, Space sector, Defense R&D.",
+            },
+            {
+              label: "Biotech / Biomedical Engg",
+              result:
+                "Courses: B.Tech Biotechnology / Biomedical. Careers: Medical Devices, Biotech R&D, Clinical Tech.",
+            },
+            {
+              label: "Interdisciplinary / Emerging (Robotics, Environmental)",
+              result:
+                "Courses: B.Tech Mechatronics, Environmental Engineering. Careers: Robotics, Sustainability, Specialised R&D.",
+            },
+          ],
+        },
+
+        school_pcb: {
+          text: "PCB path — which appeals most?",
+          options: [
+            {
+              label: "Clinical Medicine (MBBS) / Dentistry (BDS) / AYUSH",
+              result:
+                "Courses: MBBS / BDS / BAMS / BHMS. Entrance: NEET. Careers: Doctor, Surgeon, General Practitioner, Dentist, AYUSH Practitioner.",
+            },
+            {
+              label: "Allied Health (Nursing / Physiotherapy / Pharmacy)",
+              result:
+                "Courses: B.Sc Nursing, BPT (Physiotherapy), B.Pharm, B.Sc Medical Lab Tech. Careers: Nurse, Physiotherapist, Pharmacist, Lab Technician.",
+            },
+            {
+              label: "Life Sciences & Research (Biotech, Microbio)",
+              result:
+                "Courses: B.Sc Biotech / Microbiology / Biochemistry. Careers: Research Scientist, Biotech Industry, Clinical Research; path: MSc → PhD.",
+            },
+            {
+              label: "Public Health & Healthcare Management",
+              result:
+                "Courses: B.Sc Public Health / Health Administration programs. Careers: Public Health Specialist, Health Program Coordinator.",
+            },
+          ],
+        },
+
+        school_pcmb: {
+          text: "You like both math & bio — which direction now?",
+          options: [
+            { label: "Maths/Computing (Engineering / CS)", next: "school_pcm" },
+            {
+              label: "Biology/Health (Medicine / Life Science)",
+              next: "school_pcb",
+            },
+            {
+              label: "Interdisciplinary (Bioinformatics / Biostatistics)",
+              result:
+                "Courses: B.Tech / BSc in Bioinformatics, Computational Biology. Careers: Bioinformatics Analyst, Computational Biologist, Pharma Data roles.",
+            },
+          ],
+        },
+
+        school_purescience: {
+          text: "Pure science path — research or applied?",
+          options: [
+            {
+              label: "Research / Academia (MSc → PhD)",
+              result:
+                "Courses: B.Sc → MSc → PhD. Careers: University Researcher, Scientist (CSIR/ICMR/DRDO/ISI/ISRO), Academic Faculty.",
+            },
+            {
+              label: "Applied Industry Labs (Food, Environment, Materials)",
+              result:
+                "Courses: B.Sc specialized diplomas (Food Technology, Environmental Science). Careers: QC Analyst, Lab Technologist, Environmental Consultant.",
+            },
+          ],
+        },
+
+        // SCHOOL COMMERCE
+        school_commerce: {
+          text: "Commerce — what's most interesting?",
+          options: [
+            {
+              label: "Accounting & Taxation (CA/CMA)",
+              result:
+                "Courses: B.Com / B.Com (Hons) / BBA. Professional: CA / CMA / ACCA. Careers: Accountant, Auditor, Tax Consultant, Finance Manager.",
+            },
+            {
+              label: "Banking, Finance, Economics",
+              result:
+                "Courses: B.Com / BA Economics / BBA. Careers: Banking PO, Financial Analyst, Economist, Risk Analyst. Exams: Banking PO, SSC.",
+            },
+            {
+              label: "Business & Management (BBA → MBA)",
+              result:
+                "Courses: BBA → MBA. Careers: Manager, Product, Marketing, Operations, HR; entrance: CAT / XAT for top B-schools.",
+            },
+            {
+              label: "FinTech / Analytics",
+              result:
+                "Courses: B.Com + Analytics / BSc (Data Science) / B.Stat. Careers: Data Analyst, FinTech roles, Business Analytics.",
+            },
+          ],
+        },
+
+        // SCHOOL ARTS
+        school_arts: {
+          text: "Arts/Humanities — which area draws you?",
+          options: [
+            {
+              label: "Law & Public Policy (Law / Civil Services)",
+              result:
+                "Courses: BA + LLB / LLB / Integrated Law. Entrance: CLAT. Careers: Lawyer, Public Policy, Civil Services (UPSC/state) — requires serious exam prep.",
+            },
+            {
+              label: "Media, Journalism, Communication",
+              result:
+                "Courses: BA Journalism, BMM, Mass Comm. Careers: Journalist, Content Creator, PR, Film & Media roles.",
+            },
+            {
+              label: "Design / Creative / Fine Arts",
+              result:
+                "Courses: B.Des, BFA. Careers: Graphic Designer, Animator, Fashion Designer, UI/UX Designer.",
+            },
+            {
+              label: "Social Sciences / Teaching / NGOs",
+              result:
+                "Courses: BA Psychology / Sociology / History. Careers: Teacher (B.Ed later), Researcher, NGO Program Manager, Social Worker.",
+            },
+          ],
+        },
+
+        // SCHOOL VOCATIONAL
+        school_vocational: {
+          text: "Vocational / skills — choose a sector for quick employment:",
+          options: [
+            {
+              label: "Polytechnic Diploma (Engineering trades)",
+              result:
+                "Courses: Diploma in Mechanical/Civil/ECE. Careers: Technician, Junior Engineer, Lateral entry to B.Tech 2nd year.",
+            },
+            {
+              label: "ITI Trades (Electrician, Fitter, Carpenter)",
+              result:
+                "Courses: ITI Certificates. Careers: Skilled trades, Apprenticeship, immediate employment in industry.",
+            },
+            {
+              label: "Animation, Multimedia, UI design",
+              result:
+                "Courses: Diploma/Certificate in Animation, VFX, UI. Careers: Animator, VFX artist, UI/UX Designer, Multimedia Producer.",
+            },
+            {
+              label: "Hospitality / Travel / Retail",
+              result:
+                "Courses: Diploma in Hotel Mgmt, Retail Mgmt. Careers: Hotel Operations, Culinary, Retail Manager, Event Mgmt.",
+            },
+          ],
+        },
+
+        // -------------------------
+        // COLLEGE FLOW (abbreviated for space)
+        // -------------------------
+        college_q1: {
+          text: "Tell me: Undergraduate (UG) / Postgraduate (PG) / Professional / Diploma?",
+          options: [
+            { label: "UG (Bachelor)", next: "college_ug" },
+            { label: "PG (Master / Research)", next: "college_pg" },
+            {
+              label: "Professional (MBBS / LLB / B.Arch / B.Pharm)",
+              next: "college_professional",
+            },
+            {
+              label: "Diploma / Polytech / Vocational",
+              next: "college_vocational",
+            },
+          ],
+        },
+
+        college_ug: {
+          text: "Which UG stream are you in or planning to pursue?",
+          options: [
+            {
+              label: "Engineering / Technology",
+              result:
+                "Engineering paths include CSE, ECE, Mechanical, Civil, and many specialized domains. Focus on building practical skills, internships, and consider GATE for higher studies or PSU jobs.",
+            },
+            {
+              label: "Computer Science & IT",
+              result:
+                "CS/IT careers span software development, data science, cybersecurity, and emerging tech. Build a portfolio, contribute to open source, and gain industry certifications.",
+            },
+            {
+              label: "Commerce / Business",
+              result:
+                "Commerce leads to accounting (CA/CMA), finance, banking, or management (MBA). Consider professional certifications and entrance exam preparation.",
+            },
+          ],
+        },
+
+        college_pg: {
+          text: "PG choices: what's the goal?",
+          options: [
+            {
+              label: "Higher research (MSc / M.Tech → PhD)",
+              result:
+                "Path: MSc/MTech → PhD. Careers: Research Scientist, University Faculty, R&D in industry. Funding: fellowships (UGC/CSIR/ICAR/ICMR).",
+            },
+            {
+              label: "Professional masters (MBA / LLM / M.Pharm)",
+              result:
+                "MBA → Management roles; LLM → Specialized legal practice; M.Pharm → Pharma R&D/regulatory roles.",
+            },
+          ],
+        },
+
+        college_professional: {
+          text: "Professional students — specialization or practice?",
+          options: [
+            {
+              label: "Clinical/Professional practice",
+              result:
+                "Build practice via internships, licensing, and networking. Consider PG specialization for advancement.",
+            },
+            {
+              label: "Industry roles",
+              result:
+                "Many professionals work in industry: Pharma companies, corporate legal teams, architecture firms, etc.",
+            },
+          ],
+        },
+
+        college_vocational: {
+          text: "Diploma/polytechnic — job or degree upgrade?",
+          options: [
+            {
+              label: "Immediate employment",
+              result:
+                "Focus on internships, apprenticeships, and industry connections for technician/supervisor roles.",
+            },
+            {
+              label: "Lateral entry to degree",
+              result:
+                "Many diplomas allow lateral entry to B.Tech 2nd year for better career prospects.",
+            },
+          ],
+        },
+
+        // -------------------------
+        // INTEREST (RIASEC) MINI-QUIZ
+        // -------------------------
+        interest_q1: {
+          text: "Interest quiz — Q1: Do you prefer working with tools/machines or with people/ideas?",
+          options: [
+            {
+              label: "Tools/machines / hands-on",
+              effects: { score: { R: 2 } },
+              next: "interest_q2",
+            },
+            {
+              label: "People / helping / teaching",
+              effects: { score: { S: 2 } },
+              next: "interest_q2",
+            },
+            {
+              label: "Ideas / research / theory",
+              effects: { score: { I: 2 } },
+              next: "interest_q2",
+            },
+          ],
+        },
+
+        interest_q2: {
+          text: "Q2: Do you enjoy creative work (art, design, music) or organizing/working with data and systems?",
+          options: [
+            {
+              label: "Creative work (design/arts)",
+              effects: { score: { A: 2 } },
+              next: "interest_q3",
+            },
+            {
+              label: "Organizing / detail / accounting",
+              effects: { score: { C: 2 } },
+              next: "interest_q3",
+            },
+            {
+              label: "Leading / persuading / selling",
+              effects: { score: { E: 2 } },
+              next: "interest_q3",
+            },
+          ],
+        },
+
+        interest_q3: {
+          text: "Q3: Do you prefer solving puzzles/tech problems or caring for living systems (animals/people)?",
+          options: [
+            {
+              label: "Tech / puzzles / math",
+              effects: { score: { I: 2, R: 1 } },
+              next: "interest_q4",
+            },
+            {
+              label: "Care / health / social",
+              effects: { score: { S: 2, I: 1 } },
+              next: "interest_q4",
+            },
+            {
+              label: "Neither / both",
+              effects: { score: { A: 1, C: 1 } },
+              next: "interest_q4",
+            },
+          ],
+        },
+
+        interest_q4: {
+          text: "Q4: Do you enjoy entrepreneurship / persuading people or following established procedures?",
+          options: [
+            {
+              label: "Entrepreneurship / persuading",
+              effects: { score: { E: 2 } },
+              next: "interest_q5",
+            },
+            {
+              label: "Structured tasks / accounting / admin",
+              effects: { score: { C: 2 } },
+              next: "interest_q5",
+            },
+            {
+              label: "Creative exploration",
+              effects: { score: { A: 2 } },
+              next: "interest_q5",
+            },
+          ],
+        },
+
+        interest_q5: {
+          text: "Q5: Do you like experiments / lab work or physical practical work (machines, building)?",
+          options: [
+            {
+              label: "Lab & experiments (chem, bio)",
+              effects: { score: { I: 2 } },
+              next: "interest_q6",
+            },
+            {
+              label: "Practical / machines / field",
+              effects: { score: { R: 2 } },
+              next: "interest_q6",
+            },
+            {
+              label: "People-focused (social) tasks",
+              effects: { score: { S: 2 } },
+              next: "interest_q6",
+            },
+          ],
+        },
+
+        interest_q6: {
+          text: "Q6 (final): Which of these excites you most as a job day-to-day?",
+          options: [
+            {
+              label: "Designing a product or making art",
+              effects: { score: { A: 2 } },
+              action: "interest_finish",
+            },
+            {
+              label: "Creating software / systems / algorithms",
+              effects: { score: { I: 1, R: 1 } },
+              action: "interest_finish",
+            },
+            {
+              label: "Managing people / business growth",
+              effects: { score: { E: 2 } },
+              action: "interest_finish",
+            },
+            {
+              label: "Working in a lab, research or diagnostics",
+              effects: { score: { I: 2 } },
+              action: "interest_finish",
+            },
+          ],
+        },
+
+        // Node used for exam suggestions
+        exam_prep: {
+          text: "Which exam guidance do you want?",
+          options: [
+            {
+              label: "Engineering (JEE / State CET / GATE)",
+              result:
+                "JEE (UG) for IITs & many private colleges. State CET for state colleges. GATE (PG/PSU) for MTech & PSU recruitment. Prep tips: strong problem-solving, practice tests, conceptual clarity, coaching or self-study schedules.",
+            },
+            {
+              label: "Medical (NEET)",
+              result:
+                "NEET required for MBBS/BDS/Ayush entry. Focus: PCB fundamentals, MCQs, timed practice, NEET mock tests, revision.",
+            },
+            {
+              label: "Law (CLAT / AILET)",
+              result:
+                "CLAT for many NLUs (undergrad & LLM). Focus: Logical reasoning, English, GK, basic legal aptitude.",
+            },
+            {
+              label: "Management (CAT / XAT)",
+              result:
+                "CAT/XAT for MBA aspirants. Tips: Quant + DI, VARC (reading & verbal), logical reasoning; mock sets and time management.",
+            },
+            {
+              label: "Banking / SSC / PSC",
+              result:
+                "Bank PO / SSC / State PSC require Quant, Reasoning, English, GK. Structured preparation, previous-year papers, and mock tests help.",
+            },
+          ],
+        },
+      }; // end questions
+    </script>
+  </body>
+</html>

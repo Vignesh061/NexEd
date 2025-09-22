@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NexEd - Sign Up</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: #f6f6f6;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+      }
+
+      .signup-container {
+        background: #b4c5e4;
+        border-radius: 20px;
+        padding: 40px 40px;
+        max-width: 600px;
+        width: 100%;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      /* Tabs */
+      .tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+      }
+
+      .tab {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #6d6393;
+        padding: 12px 24px;
+        border-radius: 12px 12px 0 0;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .tab.active {
+        background: white;
+        color: #2673af;
+      }
+
+      /* Input fields */
+      .form-input {
+        width: 100%;
+        padding: 14px 16px;
+        border: none;
+        border-radius: 10px;
+        background: white;
+        font-size: 1rem;
+        color: #333;
+        outline: none;
+        margin-bottom: 15px;
+        transition: all 0.2s ease;
+      }
+
+      .form-input:focus {
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+      }
+
+      .logo-section {
+        display: flex;
+        position: absolute;
+        gap: 10px;
+        top: 20px;
+        left: 20px;
+        align-items: center;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .logo img {
+        width: 40px;
+      }
+
+      .logo-text {
+        font-size: 32px; /* adjust size */
+        font-weight: bold; /* bold for logo look */
+        font-family: Arial, sans-serif;
+      }
+
+      .logo-text .nex {
+        color: #197dbb; /* blue for Nex */
+      }
+
+      .logo-text .ed {
+        color: #000000; /* black for Ed */
+      }
+
+      /* Button */
+      .submit-button {
+        width: 100%;
+        background-color: #ebbb1b;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 14px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 10px;
+      }
+
+      .submit-button:hover {
+        background: #ebbb1bd2;
+      }
+
+      @media (max-width: 768px) {
+        .signup-container {
+          padding: 25px;
+        }
+
+        .tab {
+          font-size: 1rem;
+          padding: 10px 16px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="logo-section">
+      <div class="logo">
+        <!-- <img src="./assets/logo final.png" alt="Logo" /> -->
+        <img
+          src="{{ url_for('static', filename='./assets/logo final.png')}}"
+          alt=""
+        />
+      </div>
+      <span class="logo-text">
+        <span class="nex">Nex</span><span class="ed">Ed</span>
+      </span>
+    </div>
+    <div class="signup-container">
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active" id="signupTab" onclick="switchTab('signup')">
+          Sign up
+        </div>
+        <div class="tab" id="loginTab" onclick="switchTab('login')">Login</div>
+      </div>
+
+      <!-- Signup Form -->
+      <form id="signupForm">
+        <input type="text" class="form-input" placeholder="Name" required />
+        <input type="email" class="form-input" placeholder="Email" required />
+        <input
+          type="password"
+          class="form-input"
+          placeholder="Password"
+          required
+        />
+        <input
+          type="password"
+          class="form-input"
+          placeholder="Confirm Password"
+          required
+        />
+        <input type="text" class="form-input" placeholder="State" required />
+        <input type="text" class="form-input" placeholder="City" required />
+        <button type="submit" class="submit-button">Sign up</button>
+      </form>
+
+      <!-- Login Form -->
+      <form id="loginForm" style="display: none">
+        <input type="email" class="form-input" placeholder="Email" required />
+        <input
+          type="password"
+          class="form-input"
+          placeholder="Password"
+          required
+        />
+        <button type="submit" class="submit-button">Login</button>
+      </form>
+    </div>
+
+    <script>
+      function switchTab(tab) {
+        const signupForm = document.getElementById("signupForm");
+        const loginForm = document.getElementById("loginForm");
+        const signupTab = document.getElementById("signupTab");
+        const loginTab = document.getElementById("loginTab");
+
+        if (tab === "signup") {
+          signupForm.style.display = "block";
+          loginForm.style.display = "none";
+          signupTab.classList.add("active");
+          loginTab.classList.remove("active");
+        } else {
+          signupForm.style.display = "none";
+          loginForm.style.display = "block";
+          signupTab.classList.remove("active");
+          loginTab.classList.add("active");
+        }
+      }
+
+      // Handle signup form
+      document
+        .getElementById("signupForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault(); // stop form from refreshing
+
+          const name = this.querySelector("input[placeholder='Name']").value;
+          const email = this.querySelector("input[placeholder='Email']").value;
+          const password = this.querySelector(
+            "input[placeholder='Password']"
+          ).value;
+          const confirmPassword = this.querySelector(
+            "input[placeholder='Confirm Password']"
+          ).value;
+          const state = this.querySelector("input[placeholder='State']").value;
+          const city = this.querySelector("input[placeholder='City']").value;
+
+          if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+          }
+
+          signupUser(name, email, password, state, city);
+        });
+
+      // Handle login form
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault(); // stop form from refreshing
+
+          const email = this.querySelector("input[placeholder='Email']").value;
+          const password = this.querySelector(
+            "input[placeholder='Password']"
+          ).value;
+
+          signinUser(email, password);
+        });
+
+      function signupUser(name, email, password, state, city) {
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+
+        // check if already exists
+        if (users.some((user) => user.email === email)) {
+          alert("User already exists. Please sign in.");
+          return;
+        }
+
+        // Create user object with all the details including state and city
+        const newUser = {
+          name,
+          email,
+          password,
+          state,
+          city,
+          onboardingCompleted: false,
+        };
+
+        users.push(newUser);
+        localStorage.setItem("users", JSON.stringify(users));
+
+        // Save logged in user
+        localStorage.setItem("loggedInUser", JSON.stringify({ email }));
+
+        console.log("User created with data:", newUser);
+
+        // Redirect to onboarding
+        window.location.href = "/onboarding";
+      }
+
+      function signinUser(email, password) {
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const user = users.find(
+          (u) => u.email === email && u.password === password
+        );
+
+        if (!user) {
+          alert("Invalid credentials");
+          return;
+        }
+
+        // Save logged in user
+        localStorage.setItem("loggedInUser", JSON.stringify({ email }));
+
+        console.log("User signed in:", user);
+
+        if (user.onboardingCompleted) {
+          // Store complete user data in session for profile page
+          sessionStorage.setItem("userData", JSON.stringify(user));
+          window.location.href = "/profile"; // already completed profile
+        } else {
+          window.location.href = "/onboarding"; // not completed yet
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Back - User Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #e8eef7 0%, #f5f7fa 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .profile-container {
+            background: #a8bce6;
+            border-radius: 32px;
+            padding: 0;
+            max-width: 700px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .back-button {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: #333;
+            z-index: 10;
+        }
+
+        .back-button:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: translateX(-2px);
+        }
+
+        .profile-header {
+            padding: 60px 40px 30px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .profile-text {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+
+      .log-out button{
+        background-color: #ff3700;
+        border: none;
+        color: white;
+        padding: 8px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            flex-shrink: 0;
+        }
+
+        .welcome-text {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #4a67c4;
+            line-height: 1.2;
+        }
+
+        .profile-details {
+            background: white;
+            margin: 0 30px 30px 30px;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-row:last-of-type {
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 20px;
+        }
+
+        .interests-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 16px 0;
+            border-bottom: none;
+            gap: 20px;
+        }
+
+        .info-label {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 500;
+            min-width: 150px;
+        }
+
+        .info-value {
+            color: #4a67c4;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        .stream-value {
+            color: #4a67c4;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .interests-tags {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            flex: 1;
+        }
+
+        .interest-tag {
+            background: #2c3e7d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .interest-tag:hover {
+            background: #1e2a5a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 62, 125, 0.3);
+        }
+
+        .edit-button {
+            background-color: #EBBB1B;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 14px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(74, 103, 196, 0.3);
+        }
+
+        .edit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 103, 196, 0.4);
+            background-color: #ebbb1bdc;
+        }
+
+        .edit-button:active {
+            transform: translateY(0);
+            background-color: #886b0f;
+        }
+
+        .edit-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 40px;
+            color: #4a67c4;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(74, 103, 196, 0.3);
+            border-radius: 50%;
+            border-top-color: #4a67c4;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .profile-btn{
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .profile-btn a{
+            text-decoration: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 60px 40px;
+            color: #e74c3c;
+        }
+
+        .retry-button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .retry-button:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .no-data {
+            color: #999;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                margin: 10px;
+                max-width: none;
+            }
+
+            .profile-header {
+                padding: 60px 20px 20px 20px;
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .profile-details {
+                margin: 0 20px 20px 20px;
+                padding: 30px 20px;
+            }
+
+            .welcome-text {
+                font-size: 1.8rem;
+            }
+
+            .info-row, .interests-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+
+            .interests-tags {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-header {
+                padding: 50px 15px 15px 15px;
+            }
+
+            .profile-details {
+                margin: 0 15px 15px 15px;
+                padding: 25px 15px;
+            }
+
+            .welcome-text {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Loading state -->
+        <div id="loadingState" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Loading your profile...</p>
+        </div>
+
+        <!-- Error state -->
+        <div id="errorState" class="error-container" style="display: none;">
+            <h3>Unable to load profile</h3>
+            <p>Please complete your onboarding first.</p>
+            <button class="retry-button" onclick="window.location.href='/onboarding'">Complete Profile</button>
+        </div>
+
+        <!-- Main profile content -->
+        <div id="profileContent" style="display: none;">
+            <button class="back-button" onclick="goBack()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </button>
+
+            <div class="profile-header">
+                <div class="profile-text">
+                <img src="" alt="Profile Picture" class="profile-image" id="profileImage">
+                <h1 class="welcome-text">Welcome <span id="userName"></span></h1>
+                </div>
+                <div class="log-out">
+                    <button onclick="logout()">LogOut</button>
+                </div>
+            </div>
+
+            <div class="profile-details">
+                <div class="info-row">
+                    <span class="info-label">Name</span>
+                    <span class="info-value" id="displayName"></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value" id="userEmail"></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">State</span>
+                    <span class="info-value" id="userState"></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">City</span>
+                    <span class="info-value" id="userCity"></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Stage</span>
+                    <span class="info-value" id="userStage"></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Stream</span>
+                    <span class="stream-value" id="userStream"></span>
+                </div>
+
+                <div class="interests-row">
+                    <span class="info-label">Interests</span>
+                    <div class="interests-tags" id="interestsTags">
+                        <!-- Interest tags will be populated dynamically -->
+                    </div>
+                </div>
+
+                <div class="profile-btn">
+                <button class="edit-button" onclick="editProfile()">
+                    <svg class="edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    Edit Profile
+                </button>
+                <a href="/"><button class="edit-button">Back to Home</button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to show loading state
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'flex';
+            document.getElementById('errorState').style.display = 'none';
+            document.getElementById('profileContent').style.display = 'none';
+        }
+
+        // Function to show error state
+        function showError() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+            document.getElementById('profileContent').style.display = 'none';
+        }
+
+        // Function to show profile content
+        function showProfile() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+            document.getElementById('profileContent').style.display = 'block';
+        }
+
+        // Function to populate user data
+        function populateUserProfile(userData) {
+            console.log('Populating profile with data:', userData);
+
+            // Update profile image - generate avatar based on first letter of name
+            const profileImg = document.getElementById('profileImage');
+            const firstLetter = userData.name ? userData.name.charAt(0).toUpperCase() : 'U';
+            profileImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name || 'User')}&background=4a67c4&color=fff&size=200`;
+            profileImg.alt = (userData.name || 'User') + "'s profile picture";
+
+            // Update user name in welcome message and details
+            document.getElementById('userName').textContent = userData.name || 'User';
+            document.getElementById('displayName').textContent = userData.name || 'Not specified';
+            
+            // Update user details with fallbacks
+            document.getElementById('userEmail').textContent = userData.email || 'Not specified';
+            document.getElementById('userState').textContent = userData.state || 'Not specified';
+            document.getElementById('userCity').textContent = userData.city || 'Not specified';
+            document.getElementById('userStage').textContent = userData.stage || 'Not specified';
+            document.getElementById('userStream').textContent = userData.stream || 'Not specified';
+            
+            // Populate interests
+            const interestsContainer = document.getElementById('interestsTags');
+            interestsContainer.innerHTML = '';
+            
+            if (userData.interests && Array.isArray(userData.interests) && userData.interests.length > 0) {
+                userData.interests.forEach(interest => {
+                    const tag = document.createElement('span');
+                    tag.className = 'interest-tag';
+                    tag.textContent = interest;
+                    tag.addEventListener('click', function() {
+                        // Add click effect
+                        this.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            this.style.transform = 'translateY(-2px)';
+                        }, 150);
+                    });
+                    interestsContainer.appendChild(tag);
+                });
+            } else {
+                // Show default message if no interests
+                const noInterests = document.createElement('span');
+                noInterests.className = 'no-data';
+                noInterests.textContent = 'No interests specified';
+                interestsContainer.appendChild(noInterests);
+            }
+
+            // Show the profile content
+            showProfile();
+        }
+
+        // Function to handle back button
+        function goBack() {
+            const container = document.querySelector('.profile-container');
+            container.style.animation = 'slideOut 0.3s ease-in forwards';
+            
+            setTimeout(() => {
+                window.location.href = '/signin';
+            }, 300);
+        }
+
+        // Function to handle edit profile
+        function editProfile() {
+            const button = document.querySelector('.edit-button');
+            
+            // Add click animation
+            button.style.transform = 'translateY(0) scale(0.98)';
+            
+            setTimeout(() => {
+                button.style.transform = 'translateY(-2px) scale(1)';
+                
+                // Redirect to onboarding to edit profile
+                window.location.href = '/signin';
+                
+            }, 150);
+        }
+
+        // Function to get user data from various sources
+        function getUserData() {
+            console.log('Attempting to get user data...');
+
+            // Option 1: From sessionStorage (after onboarding completion)
+            const sessionData = sessionStorage.getItem('userData');
+            if (sessionData) {
+                try {
+                    const userData = JSON.parse(sessionData);
+                    console.log('Found complete user data in sessionStorage:', userData);
+                    return userData;
+                } catch (e) {
+                    console.error('Error parsing session userData:', e);
+                }
+            }
+
+            // Option 2: Check logged in user and get from users array
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (loggedInUser) {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const user = users.find(u => u.email === loggedInUser.email);
+                
+                if (user) {
+                    console.log('Found user in database:', user);
+                    
+                    // Check if onboarding is completed
+                    if (!user.onboardingCompleted) {
+                        console.log('User has not completed onboarding');
+                        return null;
+                    }
+                    
+                    // Store complete user data in session
+                    sessionStorage.setItem('userData', JSON.stringify(user));
+                    return user;
+                }
+            }
+
+            console.log('No user data found');
+            return null;
+        }
+
+        // Function to check if user is logged in
+        function isLoggedIn() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            return loggedInUser !== null;
+        }
+
+        // Add slide out animation
+        const slideOutKeyframes = `
+            @keyframes slideOut {
+                from {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateY(-30px);
+                }
+            }
+        `;
+        
+        const style = document.createElement('style');
+        style.textContent = slideOutKeyframes;
+        document.head.appendChild(style);
+
+        // Initialize the page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Profile page loaded, initializing...');
+            
+            // Show loading state initially
+            showLoading();
+
+            // Simulate loading delay for better UX
+            setTimeout(() => {
+                // Check if user is logged in
+                if (!isLoggedIn()) {
+                    console.log('User not logged in, redirecting to signin...');
+                    window.location.href = '/signin';
+                    return;
+                }
+
+                // Try to get user data
+                const userData = getUserData();
+
+                if (userData) {
+                    console.log('User data found, populating profile...');
+                    populateUserProfile(userData);
+                } else {
+                    console.log('No complete user data found, showing error...');
+                    showError();
+                }
+            }, 800);
+        });
+
+        // Handle page visibility change (when user comes back to tab)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && document.getElementById('profileContent').style.display === 'none') {
+                // Try to reload user data if profile is not showing
+                const userData = getUserData();
+                if (userData) {
+                    populateUserProfile(userData);
+                }
+            }
+        });
+
+        // Enhanced logout function
+function logout() {
+    // Show confirmation dialog
+    if (confirm('Are you sure you want to log out?')) {
+        try {
+            // Get current user data before clearing (for logging purposes)
+            const currentUser = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+            
+            // Clear authentication data
+            localStorage.removeItem('loggedInUser');
+            sessionStorage.removeItem('userData');
+            // Clear authentication data
+            localStorage.removeItem('users');
+            sessionStorage.removeItem('users');
+            
+            // Clear any cached data (add more as needed)
+            sessionStorage.removeItem('profileCache');
+            sessionStorage.removeItem('analysisResults');
+            
+            // Optional: Log the logout event
+            console.log(`User ${currentUser.email || 'Unknown'} logged out at ${new Date().toISOString()}`);
+            
+            // Show loading state during logout
+            const logoutBtn = document.querySelector('.log-out button');
+            if (logoutBtn) {
+                logoutBtn.textContent = 'Logging out...';
+                logoutBtn.disabled = true;
+            }
+            
+            // Add smooth transition animation
+            const container = document.querySelector('.profile-container');
+            if (container) {
+                container.style.transition = 'all 0.3s ease-in';
+                container.style.opacity = '0';
+                container.style.transform = 'translateY(-30px)';
+            }
+            
+            // Redirect after animation completes
+            setTimeout(() => {
+                // Clear the page completely and redirect
+                window.location.replace('/signin');
+            }, 300);
+            
+        } catch (error) {
+            console.error('Logout error:', error);
+            
+            // Fallback: Force redirect even if there's an error
+            alert('There was an issue logging out. You will be redirected to the login page.');
+            window.location.replace('/signin');
+        }
+    }
+}
+    </script>
+</body>
+</html>

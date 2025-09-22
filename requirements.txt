@@ -1,0 +1,6 @@
+Flask
+Werkzeug
+numpy
+PyMuPDF
+sentence-transformers
+scikit-learn

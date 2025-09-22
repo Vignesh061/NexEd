@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alumni/Mentor Connect - NexEd</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e8eef7 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        padding: 10px 20px;
+        background: white;
+        border-radius: 15px 15px 0 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .logo img {
+        width: 40px;
+      }
+
+      .logo-text {
+        font-size: 32px;
+        /* adjust size */
+        font-weight: bold;
+        /* bold for logo look */
+        font-family: Arial, sans-serif;
+      }
+
+      .logo-text .nex {
+        color: #197dbb;
+        /* blue for Nex */
+      }
+
+      .logo-text .ed {
+        color: #000000;
+        /* black for Ed */
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #197dbb;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #197dbb;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #3d52d5;
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .search-section {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+        text-align: center;
+      }
+
+      .search-input {
+        width: 100%;
+        max-width: 500px;
+        padding: 15px 20px;
+        border: 2px solid #e0e8f0;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: #3d52d5;
+        box-shadow: 0 0 0 3px rgba(74, 103, 196, 0.1);
+      }
+
+      .search-btn {
+        background-color: #ebbb1b;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 15px 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-left: 10px;
+      }
+
+      .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(74, 103, 196, 0.4);
+      }
+
+      .results-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .profile-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .profile-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 20px;
+        border: 3px solid #f0f4ff;
+      }
+
+      .profile-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #3d52d5;
+        margin-bottom: 8px;
+      }
+
+      .profile-role {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 5px;
+      }
+
+      .profile-college {
+        font-size: 1rem;
+        color: #2c3e7d;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      .contact-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        flex: 1;
+      }
+
+      .contact-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: auto;
+      }
+
+      .linkedin-btn {
+        background: #0077b5;
+        color: white;
+      }
+
+      .linkedin-btn:hover {
+        background: #005885;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 119, 181, 0.3);
+      }
+
+      .message-btn {
+        background: #3d52d5;
+        color: white;
+      }
+
+      .message-btn:hover {
+        background: #3a5ab4;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(74, 103, 196, 0.3);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        color: #666;
+      }
+
+      .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: #3d52d5;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 60px;
+        color: #3d52d5;
+      }
+
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(74, 103, 196, 0.3);
+        border-radius: 50%;
+        border-top-color: #3d52d5;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .back-btn {
+        background: transparent;
+        border: 2px solid #3d52d5;
+        color: #3d52d5;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 15px;
+      }
+
+      .back-btn:hover {
+        background: #3d52d5;
+        color: white;
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          padding: 15px 20px;
+        }
+
+        .container {
+          padding: 20px 10px;
+        }
+
+        .page-title {
+          font-size: 2rem;
+        }
+
+        .search-input {
+          margin-bottom: 15px;
+        }
+
+        .search-btn {
+          margin-left: 0;
+          width: 100%;
+        }
+
+        .results-section {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .profile-card {
+          padding: 20px;
+        }
+
+        .brand-name {
+          font-size: 1.4rem;
+        }
+
+        .contact-buttons {
+          flex-direction: column;
+        }
+
+        .contact-btn {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="logo-section">
+        <div class="logo">
+          <img
+            src="{{ url_for('static', filename='./assets/logo final.png') }}"
+            alt=""
+          />
+        </div>
+        <span class="logo-text">
+          <span class="nex">Nex</span><span class="ed">Ed</span>
+        </span>
+      </div>
+      <a href="/profile" class="user-info">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <span id="userName">User</span>
+      </a>
+    </div>
+
+    <div class="container">
+      <button class="back-btn" onclick="goBack()">← Back</button>
+      <h1 class="page-title">Mentor/ Alumni Connect</h1>
+
+      <div class="search-section">
+        <input
+          type="text"
+          id="collegeSearch"
+          class="search-input"
+          placeholder="Search for college or university..."
+          list="collegeList"
+          onkeypress="handleEnterKey(event)"
+        />
+        <datalist id="collegeList">
+          <option value="CIET"></option>
+          <option value="IIT Delhi"></option>
+          <option value="IIT Mumbai"></option>
+          <option value="IIT Bangalore"></option>
+          <option value="NIT Trichy"></option>
+          <option value="BITS Pilani"></option>
+          <option value="VIT Vellore"></option>
+          <option value="SRM Institute"></option>
+        </datalist>
+
+        <button class="search-btn" onclick="searchCollege()">Search</button>
+      </div>
+
+      <div id="loadingState" class="loading" style="display: none">
+        <div class="loading-spinner"></div>
+        <p>Searching for mentors and alumni...</p>
+      </div>
+
+      <div id="resultsSection" class="results-section"></div>
+
+      <div id="emptyState" class="empty-state" style="display: none">
+        <h3>No results found</h3>
+        <p>Try searching for a different college or university.</p>
+      </div>
+    </div>
+
+    <script>
+      // Sample data for different colleges
+      const collegeData = {
+        CIET: [
+          {
+            name: "Pranav",
+            role: "Mentor",
+            college: "CIET",
+            image:
+              "https://images.unsplash.com/photo-1494790108755-2616b612b1e5?w=150&h=150&fit=crop&crop=face",
+            linkedin: "https://linkedin.com/in/Pranav S",
+            email: "pranav@email.com",
+          },
+          {
+            name: "Rishi",
+            role: "Alumini",
+            college: "CIET",
+            image:
+              "https://images.unsplash.com/photo-1494790108755-2616b612b1e5?w=150&h=150&fit=crop&crop=face",
+            linkedin: "https://linkedin.com/in/rishi06x",
+            email: "kalpana@email.com",
+          },
+          {
+            name: "Vignesh",
+            role: "Alumini",
+            college: "CIET",
+            image:
+              "https://images.unsplash.com/photo-1494790108755-2616b612b1e5?w=150&h=150&fit=crop&crop=face",
+            linkedin: "https://linkedin.com/in/VIGNESH P",
+            email: "kalpana@email.com",
+          },
+          {
+            name: "Kalpana",
+            role: "Mentor",
+            college: "CIET",
+            image:
+              "https://images.unsplash.com/photo-1494790108755-2616b612b1e5?w=150&h=150&fit=crop&crop=face",
+            linkedin: "https://linkedin.com/in/kalpana-sharma",
+            email: "kalpana@email.com",
+          },
+          {
+            name: "Kadhu",
+            role: "Mentor",
+            college: "CIET",
+            image:
+              "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+            linkedin: "https://linkedin.com/in/kadhu-patel",
+            email: "kadhu@email.com",
+          },
+          {
+            name: "Nandhana",
+            role: "Mentor",
+            college: "CIET",
+            image:
+              "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+            linkedin: "https://linkedin.com/in/nandhana-reddy",
+            email: "nandhana@email.com",
+          },
+
+          {
+            name: "Yadhu",
+            role: "Mentor",
+            college: "CIET",
+            image:
+              "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+            linkedin: "https://linkedin.com/in/yadhu-krishna",
+            email: "yadhu@email.com",
+          },
+          {
+            name: "Mridula",
+            role: "Mentor",
+            college: "CIET",
+            image:
+              "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
+            linkedin: "https://linkedin.com/in/mridula-singh",
+            email: "mridula@email.com",
+          },
+          {
+            name: "Divishini",
+            role: "Mentor",
+            college: "CIET",
+            image:
+              "https://images.unsplash.com/photo-1594824388176-efc4500b5247?w=150&h=150&fit=crop&crop=face",
+            linkedin: "https://linkedin.com/in/divishini-agarwal",
+            email: "divishini@email.com",
+          },
+        ],
+        "IIT Delhi": [
+          {
+            name: "Rahul Sharma",
+            role: "Alumni",
+            college: "IIT Delhi",
+            position: "Software Engineer at Google",
+            image:
+              "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+            linkedin: "https://linkedin.com/in/rahul-sharma-iitd",
+            email: "rahul@email.com",
+          },
+          {
+            name: "Priya Gupta",
+            role: "Mentor",
+            college: "IIT Delhi",
+            image:
+              "https://images.unsplash.com/photo-1494790108755-2616b612b1e5?w=150&h=150&fit=crop&crop=face",
+            linkedin: "https://linkedin.com/in/priya-gupta-iitd",
+            email: "priya@email.com",
+          },
+        ],
+        "IIT Mumbai": [
+          {
+            name: "Arjun Patel",
+            role: "Alumni",
+            college: "IIT Mumbai",
+            position: "Data Scientist at Microsoft",
+            image:
+              "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+            linkedin: "https://linkedin.com/in/arjun-patel-iitb",
+            email: "arjun@email.com",
+          },
+        ],
+      };
+
+      function handleEnterKey(event) {
+        if (event.key === "Enter") {
+          searchCollege();
+        }
+      }
+
+      function searchCollege() {
+        const searchValue = document
+          .getElementById("collegeSearch")
+          .value.trim();
+
+        if (!searchValue) {
+          alert("Please enter a college name to search.");
+          return;
+        }
+
+        showLoading();
+
+        // Simulate API call delay
+        setTimeout(() => {
+          const results = collegeData[searchValue] || [];
+          displayResults(results, searchValue);
+          hideLoading();
+        }, 1500);
+      }
+
+      function showLoading() {
+        document.getElementById("loadingState").style.display = "block";
+        document.getElementById("resultsSection").style.display = "none";
+        document.getElementById("emptyState").style.display = "none";
+      }
+
+      function hideLoading() {
+        document.getElementById("loadingState").style.display = "none";
+      }
+
+      function displayResults(results, collegeName) {
+        const resultsSection = document.getElementById("resultsSection");
+        const emptyState = document.getElementById("emptyState");
+
+        if (results.length === 0) {
+          emptyState.style.display = "block";
+          resultsSection.style.display = "none";
+          return;
+        }
+
+        emptyState.style.display = "none";
+        resultsSection.style.display = "grid";
+
+        resultsSection.innerHTML = results
+          .map(
+            (person) => `
+                <div class="profile-card">
+                    <img src="${person.image}" alt="${
+              person.name
+            }" class="profile-image">
+                    <div class="profile-name">${person.name}</div>
+                    <div class="profile-role">${person.role}</div>
+                    <div class="profile-college">${person.college}</div>
+                    ${
+                      person.position
+                        ? `<div style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">${person.position}</div>`
+                        : ""
+                    }
+                    
+                    <div class="contact-buttons">
+                        <a href="${
+                          person.linkedin
+                        }" target="_blank" class="contact-btn linkedin-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                            LinkedIn
+                        </a>
+                        <button class="contact-btn message-btn" onclick="sendMessage('${
+                          person.name
+                        }', '${person.email}')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            Message
+                        </button>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      function sendMessage(name, email) {
+        const subject = encodeURIComponent(
+          `Mentorship Inquiry - NexEd Platform`
+        );
+        const body = encodeURIComponent(
+          `Hi ${name},\n\nI found your profile on NexEd's Alumni/Mentor Connect platform and would love to connect with you for guidance and mentorship.\n\nLooking forward to hearing from you!\n\nBest regards,`
+        );
+
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+      }
+
+      function openProfile() {
+        const loggedInUser = localStorage.getItem("loggedInUser");
+        if (loggedInUser) {
+          window.location.href = "profile.html";
+        } else {
+          alert("Please log in to view your profile.");
+          window.location.href = "/signin";
+        }
+      }
+
+      // Initialize page
+      document.addEventListener("DOMContentLoaded", function () {
+        loadUserData();
+      });
+
+      // Load user data
+      function loadUserData() {
+        const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+        if (loggedInUser) {
+          const users = JSON.parse(localStorage.getItem("users")) || [];
+          const user = users.find((u) => u.email === loggedInUser.email);
+          if (user && user.name) {
+            document.getElementById("userName").textContent = user.name;
+            document.getElementById("userAvatar").textContent = user.name
+              .charAt(0)
+              .toUpperCase();
+
+            // Load personalized career recommendation
+            loadPersonalizedCareer(user);
+          }
+        }
+      }
+
+      function goBack() {
+        if (document.referrer && document.referrer !== window.location.href) {
+          window.history.back();
+        } else {
+          window.location.href = "/";
+        }
+      }
+    </script>
+  </body>
+</html>

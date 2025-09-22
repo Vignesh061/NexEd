@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NexEd - Complete Your Profile</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #e8eef7 0%, #f5f7fa 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+        .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        padding: 10px 20px;
+        background: white;
+        border-radius: 15px 15px 0 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo {
+         width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
+      }
+
+      .logo img {
+        width: 40px;
+      }
+
+      .logo-text {
+      font-size: 32px;
+      /* adjust size */
+      font-weight: bold;
+      /* bold for logo look */
+      font-family: Arial, sans-serif;
+    }
+
+    .logo-text .nex {
+      color: #197DBB;
+      /* blue for Nex */
+    }
+
+    .logo-text .ed {
+      color: #000000;
+      /* black for Ed */
+    }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #197dbb;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #197dbb;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+      .main-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+      }
+
+      .onboarding-container {
+        background: #c5d3f0;
+        border-radius: 32px;
+        padding: 40px 50px;
+        max-width: 800px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      .progress-bar {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 40px;
+        gap: 10px;
+      }
+
+      .progress-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .progress-dot.active {
+        background: #4a67c4;
+      }
+
+      .progress-dot.completed {
+        background: #27ae60;
+      }
+
+      .step {
+        display: none;
+      }
+
+      .step.active {
+        display: block;
+        animation: fadeIn 0.3s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .step-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #4a67c4;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .selection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .selection-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 3px solid transparent;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .selection-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(74, 103, 196, 0.2);
+      }
+
+      .selection-card.selected {
+        border-color: #4a67c4;
+        background: linear-gradient(135deg, #4a67c4 0%, #5c7cfa 100%);
+        color: white;
+      }
+
+      .selection-card.selected::before {
+        content: "✓";
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+
+      .card-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .selection-card.selected .card-icon {
+        filter: brightness(0) invert(1);
+      }
+
+      .card-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      .card-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.7;
+      }
+
+      .multi-select-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .multi-select-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .multi-select-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(74, 103, 196, 0.15);
+      }
+
+      .multi-select-card.selected {
+        border-color: #4a67c4;
+        background: #4a67c4;
+        color: white;
+      }
+
+      .buttons-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 40px;
+      }
+
+      .btn {
+        padding: 15px 30px;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-back {
+        background: rgba(255, 255, 255, 0.8);
+        color: #4a67c4;
+      }
+
+      .btn-back:hover {
+        background: white;
+        transform: translateY(-2px);
+      }
+
+      .btn-next,
+      .btn-complete {
+        background-color: #EBBB1B;
+        color: white;
+        box-shadow: 0 4px 15px rgba(74, 103, 196, 0.3);
+      }
+
+      .btn-next:hover,
+      .btn-complete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(74, 103, 196, 0.4);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      .info-text {
+        text-align: center;
+        color: #666;
+        font-size: 0.95rem;
+        margin-bottom: 30px;
+        line-height: 1.5;
+      }
+
+      .header a{
+        text-decoration: none;
+      }
+
+      @media (max-width: 768px) {
+        .onboarding-container {
+          margin: 0 10px;
+          padding: 30px 25px;
+        }
+
+        .selection-grid {
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 15px;
+        }
+
+        .multi-select-grid {
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 12px;
+        }
+
+        .step-title {
+          font-size: 1.6rem;
+        }
+
+        .buttons-container {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+     <div class="header">
+        <div class="logo-section">
+          <div class="logo">
+            <img src="{{ url_for('static', filename='./assets/logo final.png') }}" alt="">
+          </div>
+            <span class="logo-text">
+              <span class="nex">Nex</span><span class="ed">Ed</span>
+            </span>
+        </div>
+        <a href="/profile" class="user-info">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <span id="userName">User</span>
+        </a>
+      </div>
+
+    <div class="main-container">
+      <div class="onboarding-container">
+        <div class="progress-bar">
+          <div class="progress-dot active" id="dot1"></div>
+          <div class="progress-dot" id="dot2"></div>
+          <div class="progress-dot" id="dot3"></div>
+        </div>
+
+        <!-- Step 1: Stage Selection -->
+        <div class="step active" id="step1">
+          <h2 class="step-title">What's your current stage?</h2>
+          <p class="info-text">
+            What's your current educational level? This helps us recommend the
+            right courses for you.
+          </p>
+
+          <div class="selection-grid">
+            <div class="selection-card" data-value="School">
+              <div class="card-icon">🏫</div>
+              <div class="card-title">School</div>
+              <div class="card-subtitle">Classes 9-12</div>
+            </div>
+            <div class="selection-card" data-value="UG">
+              <div class="card-icon">🎓</div>
+              <div class="card-title">UG</div>
+              <div class="card-subtitle">Undergraduate</div>
+            </div>
+            <div class="selection-card" data-value="PG">
+              <div class="card-icon">📚</div>
+              <div class="card-title">PG</div>
+              <div class="card-subtitle">Postgraduate</div>
+            </div>
+            <div class="selection-card" data-value="Professional">
+              <div class="card-icon">💼</div>
+              <div class="card-title">Professional</div>
+              <div class="card-subtitle">Working</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Stream Selection -->
+        <div class="step" id="step2">
+          <h2 class="step-title">What's your stream?</h2>
+          <p class="info-text">
+            Choose your field of study or area of interest.
+          </p>
+
+          <div class="selection-grid">
+            <div class="selection-card" data-value="Science">
+              <div class="card-icon">🔬</div>
+              <div class="card-title">Science</div>
+              <div class="card-subtitle">STEM Fields</div>
+            </div>
+            <div class="selection-card" data-value="Arts">
+              <div class="card-icon">🎨</div>
+              <div class="card-title">Arts</div>
+              <div class="card-subtitle">Liberal Arts</div>
+            </div>
+            <div class="selection-card" data-value="Commerce">
+              <div class="card-icon">💰</div>
+              <div class="card-title">Commerce</div>
+              <div class="card-subtitle">Business & Finance</div>
+            </div>
+            <div class="selection-card" data-value="Engineering">
+              <div class="card-icon">⚙️</div>
+              <div class="card-title">Engineering</div>
+              <div class="card-subtitle">Technical Fields</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Interests Selection -->
+        <div class="step" id="step3">
+          <h2 class="step-title">What are your interests?</h2>
+          <p class="info-text">
+            Select all areas that interest you. This helps us personalize your
+            learning experience.
+          </p>
+
+          <div class="multi-select-grid">
+            <div class="multi-select-card" data-value="Tech">Tech</div>
+            <div class="multi-select-card" data-value="Healthcare">
+              Healthcare
+            </div>
+            <div class="multi-select-card" data-value="Business">Business</div>
+            <div class="multi-select-card" data-value="Creative">Creative</div>
+            <div class="multi-select-card" data-value="Humanities">
+              Humanities
+            </div>
+            <div class="multi-select-card" data-value="Coding">Coding</div>
+            <div class="multi-select-card" data-value="Design">Design</div>
+            <div class="multi-select-card" data-value="Marketing">
+              Marketing
+            </div>
+            <div class="multi-select-card" data-value="Finance">Finance</div>
+            <div class="multi-select-card" data-value="Research">Research</div>
+            <div class="multi-select-card" data-value="Teaching">Teaching</div>
+            <div class="multi-select-card" data-value="Sports">Sports</div>
+          </div>
+        </div>
+
+        <div class="buttons-container">
+          <button
+            class="btn btn-back"
+            id="backBtn"
+            style="display: none"
+            onclick="previousStep()"
+          >
+            Back
+          </button>
+          <button
+            class="btn btn-next"
+            id="nextBtn"
+            onclick="nextStep()"
+            disabled
+          >
+            Continue
+          </button>
+          <button
+            class="btn btn-complete"
+            id="completeBtn"
+            onclick="completeOnboarding()"
+            style="display: none"
+            disabled
+          >
+            Complete Profile
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize data storage
+      let onboardingData = {
+        stage: "",
+        stream: "",
+        interests: []
+      };
+
+      let currentStep = 1;
+      const totalSteps = 3;
+
+      // Load user data from signup
+      function loadUserData() {
+        const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+        if (loggedInUser) {
+          const users = JSON.parse(localStorage.getItem("users")) || [];
+          const user = users.find(u => u.email === loggedInUser.email);
+          if (user && user.name) {
+            document.getElementById("userName").textContent = user.name;
+            document.getElementById("userAvatar").textContent = user.name.charAt(0).toUpperCase();
+          }
+        }
+      }
+
+      // Update progress bar
+      function updateProgressBar() {
+        for (let i = 1; i <= totalSteps; i++) {
+          const dot = document.getElementById(`dot${i}`);
+          if (i < currentStep) {
+            dot.classList.remove("active");
+            dot.classList.add("completed");
+          } else if (i === currentStep) {
+            dot.classList.add("active");
+            dot.classList.remove("completed");
+          } else {
+            dot.classList.remove("active", "completed");
+          }
+        }
+      }
+
+      // Show current step
+      function showStep(step) {
+        // Hide all steps
+        document
+          .querySelectorAll(".step")
+          .forEach((s) => s.classList.remove("active"));
+
+        // Show current step
+        document.getElementById(`step${step}`).classList.add("active");
+
+        // Update buttons
+        const backBtn = document.getElementById("backBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const completeBtn = document.getElementById("completeBtn");
+
+        backBtn.style.display = step > 1 ? "block" : "none";
+
+        if (step === totalSteps) {
+          nextBtn.style.display = "none";
+          completeBtn.style.display = "block";
+        } else {
+          nextBtn.style.display = "block";
+          completeBtn.style.display = "none";
+        }
+
+        // Update button states
+        updateButtonStates();
+        updateProgressBar();
+      }
+
+      // Update button states based on selections
+      function updateButtonStates() {
+        const nextBtn = document.getElementById("nextBtn");
+        const completeBtn = document.getElementById("completeBtn");
+        let canProceed = false;
+
+        switch (currentStep) {
+          case 1:
+            canProceed = onboardingData.stage !== "";
+            break;
+          case 2:
+            canProceed = onboardingData.stream !== "";
+            break;
+          case 3:
+            canProceed = onboardingData.interests.length > 0;
+            break;
+        }
+
+        if (currentStep === totalSteps) {
+          completeBtn.disabled = !canProceed;
+        } else {
+          nextBtn.disabled = !canProceed;
+        }
+      }
+
+      // Handle single selection cards (Stage, Stream)
+      document.addEventListener("click", function (e) {
+        if (e.target.closest(".selection-card")) {
+          const card = e.target.closest(".selection-card");
+          const container = card.parentElement;
+          const value = card.getAttribute("data-value");
+
+          // Clear previous selections in this container
+          container
+            .querySelectorAll(".selection-card")
+            .forEach((c) => c.classList.remove("selected"));
+
+          // Select current card
+          card.classList.add("selected");
+
+          // Update data
+          if (currentStep === 1) {
+            onboardingData.stage = value;
+          } else if (currentStep === 2) {
+            onboardingData.stream = value;
+          }
+
+          updateButtonStates();
+        }
+      });
+
+      // Handle multi-selection cards (Interests)
+      document.addEventListener("click", function (e) {
+        if (e.target.closest(".multi-select-card")) {
+          const card = e.target.closest(".multi-select-card");
+          const value = card.getAttribute("data-value");
+
+          card.classList.toggle("selected");
+
+          // Update interests array
+          if (card.classList.contains("selected")) {
+            if (!onboardingData.interests.includes(value)) {
+              onboardingData.interests.push(value);
+            }
+          } else {
+            onboardingData.interests = onboardingData.interests.filter(
+              (i) => i !== value
+            );
+          }
+
+          updateButtonStates();
+        }
+      });
+
+      // Navigation functions
+      function nextStep() {
+        if (currentStep < totalSteps) {
+          currentStep++;
+          showStep(currentStep);
+        }
+      }
+
+      function previousStep() {
+        if (currentStep > 1) {
+          currentStep--;
+          showStep(currentStep);
+        }
+      }
+
+      // Complete onboarding and save data
+      function completeOnboarding() {
+        const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+        if (!loggedInUser) {
+          alert("Please log in first");
+          window.location.href = "/signin";
+          return;
+        }
+
+        // Get users array and find the current user
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const userIndex = users.findIndex(u => u.email === loggedInUser.email);
+        
+        if (userIndex !== -1) {
+          // Get the current user with all existing data (including state, city from signup)
+          const currentUser = users[userIndex];
+          console.log("Current user before update:", currentUser);
+
+          // Update user with onboarding data, preserving existing data
+          const updatedUser = {
+            ...currentUser, // This preserves name, email, password, state, city from signup
+            stage: onboardingData.stage,
+            stream: onboardingData.stream,
+            interests: onboardingData.interests,
+            onboardingCompleted: true
+          };
+
+          console.log("Updated user after onboarding:", updatedUser);
+
+          // Update the users array
+          users[userIndex] = updatedUser;
+
+          // Save updated users array to localStorage
+          localStorage.setItem("users", JSON.stringify(users));
+
+          // Store complete user data in sessionStorage for immediate use
+          sessionStorage.setItem("userData", JSON.stringify(updatedUser));
+
+          console.log("User data saved successfully");
+        } else {
+          console.error("User not found in users array");
+          alert("Error completing profile. Please try again.");
+          return;
+        }
+
+        // Show success animation
+        const completeBtn = document.getElementById("completeBtn");
+        completeBtn.textContent = "Profile Complete!";
+        completeBtn.style.background = "linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)";
+
+        // Redirect to profile page
+        setTimeout(() => {
+          window.location.href = "/profile";
+        }, 1500);
+      }
+
+      // Initialize the onboarding
+      function initOnboarding() {
+        loadUserData();
+        showStep(1);
+      }
+
+      // Add keyboard navigation
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !document.getElementById("nextBtn").disabled) {
+          if (currentStep === totalSteps) {
+            completeOnboarding();
+          } else {
+            nextStep();
+          }
+        }
+
+        if (e.key === "Escape" && currentStep > 1) {
+          previousStep();
+        }
+      });
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        initOnboarding();
+      });
+    </script>
+  </body>
+</html>

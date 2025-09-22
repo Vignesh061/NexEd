@@ -4,3 +4,4 @@ numpy
 PyMuPDF
 sentence-transformers
 scikit-learn
+gunicorn==23.0.0

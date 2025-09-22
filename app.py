@@ -532,4 +532,4 @@ if __name__ == '__main__':
     print(f"Upload folder: {app.config['UPLOAD_FOLDER']}")
     print(f"SentenceTransformer model loaded: {model is not None}")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True)
